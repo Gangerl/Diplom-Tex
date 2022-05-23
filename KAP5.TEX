@@ -1,0 +1,55 @@
+\chapter{Anwendung auf die medizinischen Daten}
+Zur Verf"ugung steht uns die medizinische Datendatei mit 116 Eintr"agen
+und je 17 Merkmalen. Diese Merkmale sind: lfd. Nummer, Geschlecht, Alter,
+Demenz, Hypertonie, Nikotin, Diabetes, Alkohol, Herzgewicht, Hirngewicht,
+Hypercholesterin?, Cholesterinwert, Hypertriglycerid?, Triglyceridwert,
+Gewicht, L"ange, SektionsNR und Gehirn-Sektion?
+Zur Partitionierung werden haupts"achlich die Verfahren Combined
+Algorithms und Simulated Annealing / Localopt verwendet. Als
+Zielfunktion dient, wenn nicht anders angegeben, $\sum\sum$.
+
+\begin{figure}[htbp]
+%\[ \epsfxsize=8cm \epsfbox{dis000.ps} \]
+\caption{Die medizinischen Daten}
+\end{figure}
+
+\section{Vorbemerkungen}
+Haupts"achlich geht es darum, drei Krankheitstypen der senilen Demenz 
+(Form des Schwachsinns) mit den Bezeichnungen MID, SD und SDAT zu erkennen.
+Da diese Zuordnung der Datens"atze zu den Auspr"agungen der Demenz als
+Merkmal in der Datei vorhanden ist, kann eine jede Partitionierung
+leicht auf ihren Erfolg hin "uberpr"uft werden.
+
+Wir werden versuchen eine Partitionierung derart zu finden, da"s sie
+mit dem Auftreten der drei Krankheiten weitgehend "ubereinstimmt.
+Dementsprechend suchen wir eine Einteilung in drei Cluster.
+
+Da wir nach den Ergebnissen aus Kapitel \ref{tests} nur relativ gleichgro"se
+Cluster finden K"onnen, kann es angebracht sein, in mehr als 3 Cluster
+zu partitionieren, da die drei Krankheitstypen nicht in gleicher
+Anzahl vertreten sind.
+
+
+\section{Einfache Abh"angigkeiten}
+Wird eine einzelne Merkmalsauspr"agung wie Herzgewicht, Hirngewicht, L"ange,
+Gewicht, Cholesterinwert oder Triglyceridwert in drei Cluster unterteilt,
+lassen sich daraus keine R"uckschl"usse auf die Krankheitsverteilung
+ziehen. Dies ergibt eine Kontrolle der Partitionierung, wenn man sie in der
+Darstellung "`x--Achse: lfd. Nummer, y--Achse: Demenz"' anschaut.
+
+\section{Komplexere Abh"angigkeiten}
+Eine Partitionierung der Menge nach den Merkmalen Hirngewicht, 
+Cholesterinwert, Nikotin und Hypertonie brachte auch nicht die
+gew"unschte "Ubereinstimmung mit den Krankheiten, wie es in der 
+medizinischen Arbeit zu den Daten beschrieben ist.
+
+\section{Weitere Abh"angigkeiten}
+Aus der medizinischen Arbeit geht weiter hervor, da"s eine Abh"angigkeit
+zwischen dem Herzgewicht und einer bestehenden Hypertonie existiert.
+Demzufolge hat man die Auspr"agungen des Herzgewichtes in zwei Cluster
+zu partitionieren und dann zu schauen, ob dies mit dem Auftreten der
+Hypertonie "ubereinstimmt. Dies war nicht der Fall.
+
+Lediglich nahe liegende Zusammengeh"origkeiten, wie die Abh"angigkeit
+von K"or\-per\-l"an\-ge zum Gewicht und die geringere Hirnmasse bei Frauen
+konnten festgestellt werden.

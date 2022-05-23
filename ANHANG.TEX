@@ -1,0 +1,54 @@
+\begin{appendix}
+
+\chapter{Installation von \Clustering}
+Legen Sie die beiliegende Diskette in Ihr Laufwerk und starten Sie das
+Program \verb-setup.exe-. Folgen Sie den Anweisungen des Programms, um 
+die Installation korrekt durchzuf"uhren.
+Alternativ k"onnen Sie die Dateien der Diskette auch manuell auf Ihre
+Festplatte kopieren oder das Program \verb-diplom.exe- direkt starten.
+
+Im Verzeichnis \verb-data- finden sie die Testdaten aus dem Kapitel 4.
+
+
+\chapter{Fehlermeldungen von \Clustering}
+
+\begin{sloppy}
+\begin{description}
+\item[Anzahl der Cluster zu gross: wird nicht ausgef"uhrt!]
+	Die Einf"arbe--Funk\-tion kann nicht ausgef"uhrt werden, da die Anzahl
+	der verschiedenen Merkmale in $y$--Richtung die Maximalanzahl der
+	Cluster (\MAXCLUSTER) "uerschreitet. W"ahlen Sie f"ur diese Funktion
+	ein anderes Merkmal, das in vertikaler Richtung angezeigt werden soll.
+\item[Durch Subbereichs--Einschr"ankung keine Punkte mehr, 
+	die betrachtet]
+	{\bf werden muessen}
+	Sie haben zuviele Daten durch die Einschr"ankungen im Subbereiche--Men"u
+	ausgeschlossen. Es sind keine Datens"atze "ubriggeblieben. Machen Sie
+	eine Ihrer Auswahlen r"uckg"angig.
+\item[Kein Speicher in \dots]
+	\Clustering\ hatte Probleme beim Allokieren von Speicher. Beenden Sie
+	andere Windows--Anwendungen, damit gen"ugend Speicher zur Verf"ugung
+	steht und versuchen Sie es dann erneut.
+\item[Lesefehler: Daten entsprechen nicht der Vorschrift]
+	In der Datei befindet sich ein Datensatz, der nicht den Spezifikationen
+	der Formatzeile gen"ugt. Bitte kontroliieren Sie Ihre Datei
+	dahingehend (steht z. B. ein Komma statt eines Punktes f"ur eine
+	Dezimalstelle?).
+\item[Lesefehler: Falsche Titelzeile in der Datei]
+	Die Anzahl der durch Semikola getrennten Merkmals"uberschriften stimmt
+	nicht mit der Anzahl der Merkmale "uberein oder es treten Leerzeichen auf.
+\item[Lesefehler: Feld $n$ ent"alt keine signifikanten Daten]
+	In der Merkmalsspalte $n$ tritt nur eine Auspr"agung auf. Bitte
+	f"ugen Sie eine weitere Auspr"agung hinzu, oder entfernen Sie diese
+	Spalte aus der Datei.
+\item[Lesefehler:]
+	Allgemeiner Lesefehler
+\item[Arbeite auf alten Daten weiter]
+	Da das Einlesen einer neuen Datei fehlerhaft verlaufen ist, stehen
+	weiterhin die bisherigen Daten zur Verf"ugung.
+\end{description}
+\end{sloppy}
+
+Alle weiteren Fehlermeldungen stammen von Windows und sollten
+im dazugeh"origen Handbuch nachgeschlagen werden.
+

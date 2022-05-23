@@ -1,0 +1,683 @@
+\chapter{Testreihen}
+\label{tests}
+Um die Verfahren testen zu k"onnen, werden entsprechende Testdaten
+ben"otigt. In diesem Kapitel werden dazu
+einige k"unstlich erzeugte Eingabedateien betrachtet,
+die jeweils spezielle Charakteristika aufweisen. Mit diesen Daten sollen
+R"uckschl"usse auf sinnvolle Kombinationen von Nachbarschaften, Algorithmen 
+und Zielfunktionen gewonnen werden. 
+
+Alle Laufzeiten beziehen sich auf einen PC mit 486DX2--Prozessor (66MHz)
+und 20MB RAM unter Windows 3.11
+
+\section{Betrachtung einer gleichverteilten Menge}
+Als erstes wollen wir ein Problem betrachten, bei dem die Elemente 
+weitestgehend gleichverteilt sind. Siehe dazu die Abbildung 
+\ref{gleichverteilt}. Die Anzahl der Elemente betr"agt 30.
+
+\begin{figure}[htbp]
+%\[ \epsfxsize=4cm \epsfbox{gleichve.ps} \]
+\caption{Gleichverteilte Elemente}
+\label{gleichverteilt}
+\end{figure}
+
+Es wurden jeweils 5 Testl"aufe zu jeder betrachteten Kombination
+durchgef"uhrt. Angegeben sind dabei der Zielfunktionswert und die Zeit,
+die ben"otigt wurde, diesen zu finden.  
+Unter "`Sv."' ist das Suchverfahren angegeben. Es bedeuten dabei
+LS = Local Search, II = Iterative Improvement, SA = Simulated Annealing,
+SL = Simulated Annealing / Localopt, TA = Threshold Acceptance, 
+TS = Tabu Search.
+Die Tests sind in die Nachbarschaftsauswahl untergliedert.
+
+
+\subsection*{Single--Nearest--Cluster}
+In dieser Teiluntersuchung wollen wir auch einen optimalen Wert
+f"ur die Anzahl der Nachbarn bei der Nearest--Cluster Nachbarschaft 
+bestimmen. Ein optimaler Wert ist sicherlich die Anzahl aller Elemente,
+aber wie wir uns "uberlegt haben, ist dieser Wert i.a.\ viel zu gro"s.
+Der erste Teil einer Tabelle beschreibt die Werte, die erzielt wurden, 
+wenn alle Nachbarn betrachtet werden.
+
+Ergebnisse f"ur $k=2$ Cluster, optimaler Wert 94.80 f"ur die Zielfunktion 
+$\sum\sum$:
+
+{\footnotesize
+\setlength\tabcolsep{0.75mm}
+\begin{tabular}{l||rr|rr|rr|rr|rr||ccc||ccc}
+%\multicolumn{1}{c}{} 
+Sv. & 
+	\multicolumn{10}{c||}{{\normalsize Ergebniswerte} \rule[-1mm]{0mm}{5mm} } &
+	\multicolumn{3}{c||}{{\normalsize Zeit}} & 
+	\multicolumn{3}{c}{{\normalsize Zfkt.-wert}} \\ 
+%\raisebox{2.5ex}[-2.5ex]{{\normalsize Sv.}} &
+ &
+	\multicolumn{2}{c|}{1} &
+	\multicolumn{2}{c|}{2} &
+	\multicolumn{2}{c|}{3} &
+	\multicolumn{2}{c|}{4} &
+	\multicolumn{2}{c||}{5} &
+	min & max & {\o} & min & max & {\o}\\
+\hline
+\multicolumn{17}{c}{{\normalsize Nachbaranzahl $t=30$:}\rule[-2mm]{0mm}{8mm}}\\
+\hline
+LS&95.80&0.49&95.80&0.28&94.80&0.38&94.80&0.44&94.80&0.28&0.28&0.49&0.37&94.80&95.80&95.20\\
+II&95.74&0.28&95.74&0.22&95.80&0.22&95.80&0.22&95.80&0.22&0.22&0.28&0.23&95.74&95.80&95.78\\
+SA&94.80&0.60&94.80&0.61&94.80&0.55&94.80&0.66&97.76&0.66&0.55&0.66&0.62&94.80&97.76&95.39\\
+SL&94.80&5.88&94.80&3.80&94.80&4.78&94.80&2.64&94.80&0.66&0.66&5.88&3.55&94.80&94.80&94.80\\
+TA&94.80&0.50&95.80&0.71&95.80&0.71&94.80&0.55&95.74&0.77&0.44&0.77&0.65&94.80&95.80&95.39\\
+TS&96.10&0.93&96.72&0.82&95.74&0.77&95.80&0.60&95.74&0.49&0.49&0.93&0.72&95.74&96.72&96.02\\
+\hline
+\multicolumn{1}{l}{{\o}} & \multicolumn{10}{c}{\quad} & 0.49&1.50&\multicolumn{1}{c}{1.02} & 95.11&96.11&95.43\\
+\multicolumn{17}{c}{{\normalsize Nachbaranzahl $t=5$:}\rule[-2mm]{0mm}{8mm}}\\
+\hline
+LS&94.80&0.39&94.80&0.39&94.80&0.39&99.32&0.44&97.76&0.17&0.17&0.44&0.36&94.80&98.32&96.30\\
+II&95.80&0.17&94.80&0.11&95.74&0.16&94.80&0.17&95.80&0.17&0.11&0.17&0.16&94.80&95.80&95.39\\
+SA&94.80&0.60&94.80&0.60&94.80&0.55&94.80&0.66&94.80&0.61&0.55&0.66&0.60&94.80&94.80&94.80\\
+SL&94.80&4.01&94.80&3.24&94.80&2.53&94.80&1.81&94.80&4.23&1.81&4.23&3.16&94.80&94.80&94.80\\
+TA&94.80&0.50&97.76&0.60&95.74&0.49&95.74&0.49&95.74&0.60&0.49&0.60&0.54&94.80&97.76&95.96\\
+TS&94.80&0.71&94.80&0.22&94.80&1.26&94.80&1.21&94.80&0.88&0.22&1.26&0.86&94.80&94.80&94.80\\
+\hline
+\multicolumn{1}{l}{{\o}} & \multicolumn{10}{c}{\quad} & 0.56&1.23&\multicolumn{1}{c}{0.95} & 94.80&96.05&95.34\\
+\multicolumn{17}{c}{{\normalsize Nachbaranzahl $t=3$:}\rule[-2mm]{0mm}{8mm}}\\
+\hline
+LS&99.32&0.28&96.69&0.22&96.72&0.17&99.32&0.33&99.41&0.33&0.17&0.33&0.27&96.69&99.41&98.29\\ 
+II&99.51&0.06&96.69&0.11&94.80&0.11&96.77&0.11&99.32&0.11&0.06&0.11&0.10&94.80&99.51&97.42\\
+SA&94.80&0.55&98.73&0.50&98.73&0.49&95.74&0.49&98.73&0.49&0.49&0.55&0.50&94.80&98.73&97.35\\
+SL&96.72&2.25&94.80&1.81&95.80&1.15&94.80&0.38&97.76&2.28&0.38&2.25&1.57&94.80&97.76&95.98\\
+TA&95.74&0.38&97.76&0.50&96.77&0.44&96.69&0.28&94.80&0.49&0.28&0.50&0.42&94.80&97.76&96.35\\
+TS&95.74&0.99&96.64&1.09&94.80&1.26&94.80&0.17&96.64&1.04&0.17&1.26&0.91&94.80&96.64&95.72\\
+\hline
+\multicolumn{1}{l}{{\o}} & \multicolumn{10}{c}{\quad} & 0.26&0.83&\multicolumn{1}{c}{0.63} & 95.12&98.30&96.85
+\end{tabular}
+}
+
+\vspace{3mm}
+
+Die teilweise recht unterschiedlichen Ergebnisse in einer Zeile lassen 
+darauf schliessen, da"s die L"osung stark von der Startpartition abh"angt.
+Dementsprechend ist es also sinnvoll, f"ur ein konkretes Problem ein
+Verfahren mehrfach anzuwenden, um den besten Zielfunktionswert zu bestimmen.
+Dieses Verhalten l"a"st sich auch genau bei dem Verfahren Simulated Annealing /
+Localopt beobachten, bei dem durch mehrfache Anwendung der Lokalen
+Suche fast immer das Optimum gefunden wird. Allerdings mu"s daf"ur auch
+eine entsprechend h"ohere Rechenzeit in Kauf genommen werden.
+
+Bei der Tabu Suche hat sich eine
+L"ange von 3 Eintr"agen in der Tabu Liste als optimal 
+erwiesen. Ist die Liste k"urzer, so konvergiert die Tabu Suche
+deutlich schlechter; je l"anger sie ist, desto geringer ist die
+Wahrscheinlichkeit, das Optimum zu erreichen.
+Interessanterweise sind die Ergebnisse bei einer kleineren Nachbaranzahl
+deutlich besser, als wenn alle Elemente bei der Suche nach einem neuen
+Cluster betrachtet werden.
+
+Nach unseren "Uberlegungen erwarten wir bei der gr"o"sten Nachbaranzahl die 
+besten Zielfunktionswerte; und bei kleineren Anzahlen schlechtere
+Werte bei k"urzerer Laufzeit. Dies ist nicht unbedingt
+erf"ullt, denn die Zielfunktionswerte sind f"ur die Nachbaranzahl $t=5$ sogar
+noch besser (im Durchschnitt 95.34 zu 95.43, au"ser bei der Zielfunktion
+Threshold Acceptance). 
+%Dies kann nat"urlich an einer zu kleinen Stichprobe der Me"swerte liegen. 
+Eine m"ogliche Ursache hierf"ur ist ein zu kleiner Stichprobenumfang.
+
+Wird die Nachbaranzahl weiter
+gesenkt, wie im dritten Teil der Tabelle auf $t=3$ Nachbarn, 
+so stellt man fest, da"s die
+Ergebnisse wieder schlechter werden. Drei Nachbarn scheinen also nicht
+auszureichen, um gleichm"a"sig gute Ergebnisse zu erzielen.
+Betrachtet man die Laufzeiten, so sieht man 
+best"atigt, da"s die Algorithmen bei weniger Nachbarn schneller
+terminieren; bei 3 zu 30 Nachbarn beinahe in der H"alfte der Zeit.
+
+Diese Ergebnisse lassen sich f"ur eine gr"o"sere Clusteranzahl ($k=3,4,5$)
+in so weit best"atigen, da"s bei 5 Nachbarn noch sehr gute und bei weniger
+Nachbarn keine so guten Ergebnisse mehr erzielt werden.
+Der einzige Unterschied besteht darin, da"s die Ergebnisse bei 5 Nachbarn nicht
+mehr besser sind als bei mehr Nachbarn, was bei obiger Tabelle auf eine
+"`ungl"uckliche"' Stichprobe schliessen l"a"st.
+
+Die Tabellen hierzu sind nicht extra aufgef"uhrt, da sie au"ser den eben
+genannten keine weiteren Informationen beinhalten. Ebenso verh"alt es sich
+mit den Daten f"ur die Zielfunktion $\sum\sum^2$, die die gleiche
+L"osungspartition mit dem Zielfunktionswert 51.57 liefert. "Uber die 
+anderen Zielfunktionen l"a"st sich leider nur sagen, da"s sie keine
+sinnvollen L"osungen lieferten; entweder zeigen sie keine 
+Kon\-ver\-genz\-ei\-gen\-schaf\-ten, oder sie sind bestrebt, alle Elemente einem
+Cluster zuzuordnen.
+
+
+\subsection*{Single--Centroid}
+
+Ergebnisse f"ur $k=2$ Cluster, optimaler Wert 94.80 f"ur die Zielfunktion 
+$\sum\sum$:
+
+{\footnotesize
+\setlength\tabcolsep{0.75mm}
+\begin{tabular}{l||rr|rr|rr|rr|rr||ccc||ccc}
+%\multicolumn{1}{c}{} & 
+Sv. & 
+	\multicolumn{10}{c||}{{\normalsize Ergebniswerte} \rule[-1mm]{0mm}{5mm} } &
+	\multicolumn{3}{c||}{{\normalsize Zeit}} & 
+	\multicolumn{3}{c}{{\normalsize Zfkt.-wert}} \\ 
+%\raisebox{2.5ex}[-2.5ex]{{\normalsize Sv.}} &
+ &
+	\multicolumn{2}{c|}{1} &
+	\multicolumn{2}{c|}{2} &
+	\multicolumn{2}{c|}{3} &
+	\multicolumn{2}{c|}{4} &
+	\multicolumn{2}{c||}{5} &
+	min & max & {\o} & min & max & {\o}\\
+\hline
+\hline
+LS&94.80&0.39&95.80&0.33&94.80&0.33&99.81&0.27&99.32&0.38&0.27&0.39&0.34&94.80&99.81&96.91\\
+II&95.74&0.33&99.35&0.17&96.05&0.22&94.80&0.27&98.73&0.33&0.17&0.33&0.26&94.80&99.35&96.93\\
+SA&94.80&0.22&94.80&0.17&95.74&0.22&94.80&0.22&95.74&0.28&0.17&0.28&0.22&94.80&95.74&95.18\\
+SL&94.80&0.28&97.76&0.22&94.80&0.33&98.73&0.38&94.80&0.39&0.22&0.39&0.32&94.80&98.73&96.18\\
+TA&94.80&0.22&97.90&0.22&94.80&0.22&99.66&0.22&97.76&0.11&0.11&0.22&0.20&94.80&99.88&98.01\\
+TS&96.72&0.22&99.32&0.27&99.32&0.28&99.88&0.17&94.80&0.22&0.17&0.28&0.23&94.80&99.88&98.01\\
+\hline
+\multicolumn{1}{l}{{\o}} & \multicolumn{10}{c}{\quad} & 0.19&0.32&\multicolumn{1}{c}{0.26} & 94.80&98.88&96.70
+\end{tabular}
+}
+
+Die Algorithmen zeigen alle ein "ahnliches Verhalten wie bei der 
+Nearest--Cluster Nachbarschaft, jedoch sind hier die durchschnittlichen
+Zielfunktionswerte deutlich schlechter. Andererseits terminieren die 
+Verfahren auch schneller. Die Single--Centroid Nachbarschaft ist dar"uber
+hinaus in der Lage f"ur alle Zielfunktionen bei entsprechenden Algorithmen,
+in erster Linie Simulated Annealing / Localopt, eine L"osung zu finden.
+Dies ist in Tabelle \ref{tabgleich} dargestellt.
+
+\subsection*{Single--Random}
+
+Ergebnisse f"ur $k=2$ Cluster, optimaler Wert 94.80 f"ur die Zielfunktion 
+$\sum\sum$:
+
+{\footnotesize
+\setlength\tabcolsep{0.75mm}
+\begin{tabular}{l||rr|rr|rr|rr|rr||ccc||ccc}
+%\multicolumn{1}{c}{} & 
+Sv. & 
+	\multicolumn{10}{c||}{{\normalsize Ergebniswerte} \rule[-1mm]{0mm}{5mm} } &
+	\multicolumn{3}{c||}{{\normalsize Zeit}} & 
+	\multicolumn{3}{c}{{\normalsize Zfkt.-wert}} \\ 
+%\raisebox{2.5ex}[-2.5ex]{{\normalsize Sv.}} &
+ & 
+	\multicolumn{2}{c|}{1} &
+	\multicolumn{2}{c|}{2} &
+	\multicolumn{2}{c|}{3} &
+	\multicolumn{2}{c|}{4} &
+	\multicolumn{2}{c||}{5} &
+	min & max & {\o} & min & max & {\o}\\
+\hline
+\hline
+LS&98.73&0.28&98.73&0.28&94.80&0.33&95.74&0.22&95.74&0.39&0.22&0.39&0.30&94.80&98.73&96.75\\
+II&95.80&0.17&98.73&0.17&95.74&0.11&99.33&0.11&95.80&0.22&0.11&0.22&0.16&95.80&99.33&97.08\\
+SA&95.74&0.71&95.74&0.60&94.80&0.60&94.80&0.93&94.80&0.77&0.60&0.93&0.72&94.80&95.74&95.18\\
+SL&95.42&4.78&96.31&2.21&94.80&2.86&94.80&4.01&94.80&0.99&0.99&4.78&2.97&94.80&96.31&95.23\\
+TA&94.80&0.88&95.74&0.77&99.32&0.50&95.74&0.60&99.32&0.60&0.50&0.88&0.67&95.74&99.32&96.98\\
+TS&95.80&1.09&94.80&1.37&95.74&1.98&97.76&0.71&96.82&1.22&0.51&1.53&1.02&95.12&97.87&96.23\\
+\hline
+\multicolumn{1}{l}{{\o}} & \multicolumn{10}{c}{\quad} & 0.51&1.53&\multicolumn{1}{c}{1.02} & 95.12&97.87&96.23
+\end{tabular}
+}
+
+Auch f"ur diese Nachbarschaft werden keine so guten L"osungen gefunden, und
+auch die Laufzeiten der Algorithmen sind diesmal deutlich schlechter.
+Es zeigt sich, da"s eine zuf"allige Nachbarauswahl nicht die Leistung der
+anderen Nachbarschaften bringen kann. Als Zielfunktion kommt auch hier
+nur noch $\sum\sum^2$ in Frage.
+
+\subsection*{Simultaneous--Nearest--Cluster}
+Es hat sich gezeigt, da"s die Simultaneous--Nearest--Cluster Nachbarschaft 
+die Erwartungen nicht erf"ullen konnte: Entweder verlief
+der Schritt von einer Partition zur n"achsten zu ungeordnet, so da"s der
+neue Zielfunktionswert nicht besser war als der alte; oder
+es wurden alle Elemente einem einzigen Cluster zugeordnet, was keine
+sinnvolle L"osung ist.
+Folglich wird diese Nachbarschaft in die weiteren Betrachtungen
+nicht mit einbezogen.
+
+\subsection*{Simultaneous--Centroid}
+
+Ergebnisse f"ur $k=2$ Cluster, optimaler Wert 94.80 f"ur die Zielfunktion 
+$\sum\sum$:
+
+{\footnotesize
+\setlength\tabcolsep{0.75mm}
+\begin{tabular}{l||rr|rr|rr|rr|rr||ccc||ccc}
+%\multicolumn{1}{c}{} & 
+Sv. & 
+	\multicolumn{10}{c||}{{\normalsize Ergebniswerte} \rule[-1mm]{0mm}{5mm} } &
+	\multicolumn{3}{c||}{{\normalsize Zeit}} & 
+	\multicolumn{3}{c}{{\normalsize Zfkt.-wert}} \\ 
+% \raisebox{2.5ex}[-2.5ex]{{\normalsize Sv.}} &
+ & 
+	\multicolumn{2}{c|}{1} &
+	\multicolumn{2}{c|}{2} &
+	\multicolumn{2}{c|}{3} &
+	\multicolumn{2}{c|}{4} &
+	\multicolumn{2}{c||}{5} &
+	min & max & {\o} & min & max & {\o}\\
+\hline
+\hline
+LS&95.74&0.05&95.80&0.01&96.22&0.05&94.80&0.16&95.74&0.05&0.01&0.16&0.06&94.80&96.22&95.66\\
+SL&95.74&0.11&94.80&0.05&94.80&0.05&95.74&0.05&95.74&0.11&0.05&0.11&0.08&94.80&95.74&95.36\\
+\hline
+\multicolumn{1}{l}{{\o}} & \multicolumn{10}{c}{\quad} & 0.03&0.14&\multicolumn{1}{c}{0.07} & 94.80&95.98&95.51
+\end{tabular}
+}
+
+Die wesentlich k"urzeren Laufzeiten im Gegensatz zu den Single Nachbarschaften
+beeintr"achtigen nicht die F"ahigkeit dieser Nachbarschaft, gute 
+L"osungen zu finden. Dar"uberhinaus werden unter allen Zielfunktionen
+L"osungen gefunden.
+
+
+\subsection*{Combined Algorithms}
+
+Ergebnisse f"ur $k=2$ Cluster, optimaler Wert 94.80 f"ur die Zielfunktion 
+$\sum\sum$:
+
+{\footnotesize
+\setlength\tabcolsep{0.75mm}
+\begin{tabular}{l||rr|rr|rr|rr|rr||ccc||ccc}
+%\multicolumn{1}{c}{} & 
+Sv. & 
+	\multicolumn{10}{c||}{{\normalsize Ergebniswerte} \rule[-1mm]{0mm}{5mm} } &
+	\multicolumn{3}{c||}{{\normalsize Zeit}} & 
+	\multicolumn{3}{c}{{\normalsize Zfkt.-wert}} \\ 
+%\raisebox{2.5ex}[-2.5ex]{{\normalsize Sv.}} &
+ & 
+	\multicolumn{2}{c|}{1} &
+	\multicolumn{2}{c|}{2} &
+	\multicolumn{2}{c|}{3} &
+	\multicolumn{2}{c|}{4} &
+	\multicolumn{2}{c||}{5} &
+	min & max & {\o} & min & max & {\o}\\
+\hline
+\hline
+CA&94.80&0.17&94.80&0.11&95.74&0.11&94.80&0.11&94.80&0.17&0.11&0.17&0.13&94.80&95.74&94.99
+\end{tabular}
+}
+
+Diese Weiterentwicklung von Simultaneous--Centroid zeigt, wie erwartet,
+bei ein wenig l"angerer Laufzeit ein besseres Verhalten beim Auf\/finden
+einer optimalen L"osung.
+Als Zielfunktion kommen aber die beiden Funktionen, die erst das Maximum
+innerhalb eines Clusters bestimmen, nicht in Frage.
+
+Folgende Tabelle soll einen "Uberblick 
+geben, welche Zielfunktionen mit Nachbarschaften und Algorithmen 
+korrespondieren:
+
+\begin{table}[htb]
+\caption{Kombinationen von Zielfunktion, Nachbarschaft und Suchverfahren, die 
+f"ur das Problem einer gleichverteilten Menge 
+\label{tabgleich}
+brauchbare Ergebnisse liefern. Es bedeuten hierbei: NC = Nearest Cluster, 
+C = Centroid, R = Random, SC = Simultaneous Centroid.}
+\begin{center}
+\begin{tabular}{l||c|c|c|c|c|c}
+   & $\sum\sum$ & $\sum\sum^2$ & $\sum\frac 1n \sum$ & $\max\sum$ & $\sum\max$ & $\max\max$\\
+\hline\hline
+LS &\scriptsize{\begin{tabular}{c}NC\\C\\R\\SC\end{tabular}}&
+	\scriptsize{\begin{tabular}{c}NC\\C\\R\\SC\end{tabular}}&
+	\scriptsize{\begin{tabular}{c}\\\\\\SC\end{tabular}}&
+	\scriptsize{\begin{tabular}{c}\\\\\\SC\end{tabular}}&
+	\scriptsize{\begin{tabular}{c}\\C\\\\SC\end{tabular}}&
+	\scriptsize{\begin{tabular}{c}\\C\\\\SC\end{tabular}}
+	\\ \hline
+II &\scriptsize{\begin{tabular}{c}NC\\C\\R\\SC\end{tabular}}&
+	\scriptsize{\begin{tabular}{c}NC\\C\\R\\SC\end{tabular}}&
+	\scriptsize{\begin{tabular}{c}\\\\\\SC\end{tabular}}&
+	\scriptsize{\begin{tabular}{c}\\\\\\SC\end{tabular}}&
+	\scriptsize{\begin{tabular}{c}\\\\\\SC\end{tabular}}&
+	\scriptsize{\begin{tabular}{c}\\\\\\SC\end{tabular}}
+	\\ \hline
+SA &\scriptsize{\begin{tabular}{c}NC\\C\\R\\\quad\end{tabular}}&
+	\scriptsize{\begin{tabular}{c}NC\\C\\R\\\quad\end{tabular}}&
+	\scriptsize{\begin{tabular}{c}\\\\\\\quad\end{tabular}}&
+	\scriptsize{\begin{tabular}{c}\\C\\\\\quad\end{tabular}}&
+	\scriptsize{\begin{tabular}{c}\\C\\\\\quad\end{tabular}}&
+	\scriptsize{\begin{tabular}{c}\\C\\\\\quad\end{tabular}}
+	\\ \hline
+SL &\scriptsize{\begin{tabular}{c}NC\\C\\R\\SC\end{tabular}}&
+	\scriptsize{\begin{tabular}{c}NC\\C\\R\\SC\end{tabular}}&
+	\scriptsize{\begin{tabular}{c}\\C\\\\SC\end{tabular}}&
+	\scriptsize{\begin{tabular}{c}\\C\\\\SC\end{tabular}}&
+	\scriptsize{\begin{tabular}{c}\\C\\\\SC\end{tabular}}&
+	\scriptsize{\begin{tabular}{c}\\C\\\\SC\end{tabular}}
+	\\ \hline
+TA &\scriptsize{\begin{tabular}{c}NC\\C\\R\\\quad\end{tabular}}&
+	\scriptsize{\begin{tabular}{c}NC\\C\\\\\quad\end{tabular}}&
+	\scriptsize{\begin{tabular}{c}\\\\\\\quad\end{tabular}}&
+	\scriptsize{\begin{tabular}{c}\\C\\\\\quad\end{tabular}}&
+	\scriptsize{\begin{tabular}{c}\\C\\\\\quad\end{tabular}}&
+	\scriptsize{\begin{tabular}{c}\\C\\\\\quad\end{tabular}}
+	\\ \hline
+TS &\scriptsize{\begin{tabular}{c}NC\\C\\R\\\quad\end{tabular}}&
+	\scriptsize{\begin{tabular}{c}NC\\C\\R\\\quad\end{tabular}}&
+	\scriptsize{\begin{tabular}{c}\\\\\quad\\\quad\end{tabular}}&
+	\scriptsize{\begin{tabular}{c}\\\\\\\end{tabular}}&
+	\scriptsize{\begin{tabular}{c}\\\\\\\end{tabular}}&
+	\scriptsize{\begin{tabular}{c}\\\\\\\end{tabular}}
+	\\ \hline\hline
+CA & ja & ja & ja & ja & &
+\end{tabular}
+\end{center}
+\end{table}
+
+
+\section{Betrachtung einer Menge, die aus 3 Clustern besteht}
+\label{kap42}
+Ein weiteres Testbeispiel ist eine Menge, bei der die Elemente klar
+in drei Teilmengen unterteilt sind. Die Algorithmen sollten also in der Lage 
+sein, diese Struktur schnell zu erkennen. Die Ergebnisse dieser Testreihe 
+sollen Aussagen treffen, welche Verfahren "uberhaupt in der Lage sein werden,
+Partitionen zu erkennen und mit welcher Geschwindigkeit.
+Die Verteilung der Elemente und eine optimale L"osung sind in 
+Abbildung \ref{3haufen} dargestellt. Die Anzahl der Elemente betr"agt 40.
+
+\begin{figure}[htbp]
+%\[ \epsfxsize=4cm \epsfbox{3haufen.ps} \]
+\caption{Menge aus 3 Clustern}
+\label{3haufen}
+\end{figure}
+
+Durchschnittliche Laufzeiten in Sekunden zur Auf\/findung des Optimums. 
+Ergebnisse f"ur $k=3$ Cluster. Ein Strich ("`---"') bedeutet hierbei, da"s
+das Optimum nicht gefunden wurde.
+
+\subsection*{Single--Nearest--Cluster}
+
+\begin{center}
+\begin{tabular}{l|c|c|c}
+ & $\sum\sum,\ \sum\sum^2$ & $\sum \frac 1n \sum,\ \sum\max,\ \max\sum$ &
+ 	$\max\max$\\
+	\hline
+LS & 0.55     & --- & 5\\
+II & 0.41     & --- & 3\\
+SA & 0.61     & --- & ---\\
+SL & 0.58     & --- & 5\\
+TA & 0.58     & --- & 2.5\\
+TS & 0.49$^*$ & --- & 2.5$^*$
+\end{tabular}\\
+\end{center}
+$^*$ Es treten F"alle auf, bei denen Tabu Suche nur sehr
+langsam konvergiert (5-12 Sekunden!).\\
+
+
+Die Anzahl $t$ der Nachbarn war hier mit 3 v"ollig ausreichend, eine
+gr"o"sere Zahl veranlasste die drei nicht konvergierenden Algorithmen
+nicht zu besseren L"osungen. Da wir bei dieser Problemstellung  mit 40 
+Elementen weniger Nachbarn ben"otigen als bei dem ersten Testbeispiel,
+k"onnen wir schlie"sen: Die  ben"otigte Nachbaranzahl ist nicht von
+der Gesamtanzahl der Elemente, sondern vielmehr von der 
+Verteilungsstruktur abh"angig.
+
+\subsection*{Single--Centroid}
+\begin{center}
+\begin{tabular}{l|c|c|c|c|c}
+ & $\sum\sum,\ \sum\sum^2$ & $\sum \frac 1n \sum$ & $\sum\max$ & $ \max\sum$ &
+ 	$\max\max$\\
+	\hline
+LS & 0.52 & ---  & ---$^*$ & 0.68    & 0.63 \\
+II & 0.97 & ---  & ---     & ---$^*$ & ---$^*$ \\
+SA & 0.38 & ---  & 0.40    & 0.35    & 0.38 \\
+SL & 0.60 & 3.20 & 1.20    & 0.90    & 0.71 \\
+TA & 0.38 & ---  & 0.28    & 0.44    & 0.50 \\
+TS & 0.79 & ---  & 0.92    & 1.06    & 0.89 
+\end{tabular}\\
+\end{center}
+$^*$ Es wurde nur in vereinzelten F"allen das Optimum gefunden.
+
+Die Zielfunktionen, unter denen die Algorithmen L"osungen finden, sind
+im wesentlichen die gleichen wie beim ersten Beispiel.
+Zus"atzlich war hier die Tabu Suche bei den maximierenden Funktionen
+erfolgreich.
+
+\subsection*{Single--Random}
+\begin{center}
+\begin{tabular}{l|c|c|c|c|c}
+ & $\sum\sum,\ \sum\sum^2$ & $\sum \frac 1n \sum$ & $\sum\max$ & $ \max\sum$ &
+ 	$\max\max$\\
+	\hline
+LS & ---$^*$ & ---     & --- & --- & --- \\
+II & ---$^*$ & ---$^*$ & --- & --- & --- \\
+SA & 0.82    & ---     & --- & --- & --- \\
+SL & 0.80    & ---     & --- & --- & 23.7\\
+TA & 0.79    & ---     & --- & --- & --- \\
+TS & ---$^*$ & ---     & --- & --- & --- 
+\end{tabular}\\
+\end{center}
+$^*$ Es wurde nur in vereinzelten F"allen das Optimum gefunden.
+
+Die geringe Ausbeute der Kombinationen, die die L"osung finden konnten,
+zeigt wieder das schlechte Verhalten dieser Nachbarschaft. Lediglich
+die Algorithmen, die Spr"unge "uber lokale Optima zulassen, 
+konnten "uberzeugen.
+
+\subsection*{Simultaneous--Nearest--Cluster}
+Wie auch schon im ersten Test hat diese Nachbarschaft keine verwertbaren
+Ergebnisse geliefert.
+
+\subsection*{Simultaneous--Centroid}
+\begin{center}
+\begin{tabular}{l|c|c|c|c|c}
+ & $\sum\sum,\ \sum\sum^2$ & $\sum \frac 1n \sum$ & $\sum\max$ & $ \max\sum$ &
+ 	$\max\max$\\
+	\hline
+LS$^*$ & 0.17 & 0.13 & 0.13 & 0.13 & 0.16 \\
+SL     & 0.18 & 0.18 & 0.25 & 0.21 & 0.17 
+\end{tabular}\\
+\end{center}
+$^*$ In vereinzelten F"allen wurde das Optimum {\bf nicht} gefunden.
+
+Die wieder sehr kurzen Laufzeiten best"atigen die Aussage des ersten Teils
+"uber diese Nachbarschaft. Da der einfache Simultaneous Algorithmus
+nicht immer in der Lage war, die L"osung zu finden, wird best"atigt,
+da"s eine Nachoptimierung ben"otigt wird.
+
+\subsection*{Combined Algorithms}
+\begin{center}
+\begin{tabular}{l|c|c|c|c|c}
+ & $\sum\sum,\ \sum\sum^2$ & $\sum \frac 1n \sum$ & $\sum\max$ & $ \max\sum$ &
+ 	$\max\max$\\
+	\hline
+CA & 0.22 & 0.21 & 0.42$^*$ & 0.19$^*$ & 1.30
+\end{tabular}\\
+\end{center}
+$^*$ In vereinzelten F"allen wurde das Optimum {\bf nicht} gefunden.
+
+Mit Hife der Nachoptimierung zeigt sich, wie bei Simulated Annealing /
+Localopt, ein besseres Konvergenzverhalten beim Finden der L"osung.
+
+%\section{Betrachtung zweier sich umfassender Mengen}
+\section{Betrachtung einer eine andere sichelf"ormig umfassender Menge}
+\label{sichel}
+Dieses Beispiel mit 50 Elementen stellt ein besonderes Problem dar: Die
+eine Teilmenge umfasst in der 2--dimensionalen Ebene teilweise die
+restlichen Elemente. Siehe Abbildung \ref{umfassend}.
+
+\begin{figure}[htbp]
+%\[ \epsfxsize=4cm \epsfbox{umfassen.ps} \]
+\caption{2 sich umfassende Mengen}
+\label{umfassend}
+\end{figure}
+
+Die Zielfunktionen, die in den Clustern Distanzen summieren bzw. maximieren,
+sind nicht in der Lage diese Form zu erkennen und weisen immer einen Teil
+der "au"seren Menge der inneren zu. Lediglich eine Partitionierung in 3 
+Cluster ist derart m"oglich, da"s die Elemente in der kleinen Teilmenge
+einen eigenen Cluster bilden (siehe Abbildung \ref{umfassende}).
+
+\begin{figure}[htbp]
+%\[ \epsfxsize=4cm \epsfbox{um3farbe.ps} \]
+\caption{Partitionierung in 3 Cluster}
+\label{umfassende}
+\end{figure}
+
+Auch diese "`leichtere"' Partitionierung war nicht durch {\it eine}
+Zielfunktion realisierbar, sondern es wurde hierzu die Funktion
+ $3\cdot \sum\frac 1n \sum \ + \ \sum\max \ + \ \max\max$ verwendet.
+
+
+\section{Ergebnisse}
+Aus den in diesem Kapitel gewonnen Erkentnissen mu"s nun festgelegt 
+werden, welche Verkn"upfungen aus Zielfunktion, Nachbarschaft und
+Suchverfahren auf die medizinischen Daten angewandt werden soll.
+Dazu werden die Eintr"age aus der Tabelle \ref{tabgleich} gestrichen, 
+die nach den Ergebnissen aus \ref{kap42} keine Partitionierung erkennen
+konnten. Wir erhalten dann als neue "Ubersicht von brauchbaren Kombinationen 
+die Tabelle \ref{tabergebnisse}.
+
+\begin{table}[htb]
+\caption{Kombinationen von Zielfunktion, Nachbarschaft und Suchverfahren, 
+\label{tabergebnisse}
+die in den bisherigen Tests brauchbare Ergebnisse lieferten. Es bedeuten hierbei: NC = Nearest Cluster, C = Centroid, R = Random, SC = Simultaneous Centroid.}
+\begin{center}
+\begin{tabular}{l||c|c|c|c|c|c}
+   & $\sum\sum$ & $\sum\sum^2$ & $\sum\frac 1n \sum$ & $\max\sum$ & $\sum\max$ & $\max\max$\\
+\hline\hline
+LS &\scriptsize{\begin{tabular}{c}NC\\C\\\\SC\end{tabular}}&
+	\scriptsize{\begin{tabular}{c}NC\\C\\\\SC\end{tabular}}&
+	\scriptsize{\begin{tabular}{c}\\\\\\SC\end{tabular}}&
+	\scriptsize{\begin{tabular}{c}\\\\\\SC\end{tabular}}&
+	\scriptsize{\begin{tabular}{c}\\C\\\\SC\end{tabular}}&
+	\scriptsize{\begin{tabular}{c}\\C\\\\SC\end{tabular}}
+	\\ \hline
+II &\scriptsize{\begin{tabular}{c}NC\\C\\\\SC\end{tabular}}&
+	\scriptsize{\begin{tabular}{c}NC\\C\\\\SC\end{tabular}}&
+	\scriptsize{\begin{tabular}{c}\\\\\\SC\end{tabular}}&
+	\scriptsize{\begin{tabular}{c}\\\\\\SC\end{tabular}}&
+	\scriptsize{\begin{tabular}{c}\\\\\\SC\end{tabular}}&
+	\scriptsize{\begin{tabular}{c}\\\\\\SC\end{tabular}}
+	\\ \hline
+SA &\scriptsize{\begin{tabular}{c}NC\\C\\R\\\quad\end{tabular}}&
+	\scriptsize{\begin{tabular}{c}NC\\C\\R\\\quad\end{tabular}}&
+	\scriptsize{\begin{tabular}{c}\\\\\\\quad\end{tabular}}&
+	\scriptsize{\begin{tabular}{c}\\C\\\\\quad\end{tabular}}&
+	\scriptsize{\begin{tabular}{c}\\C\\\\\quad\end{tabular}}&
+	\scriptsize{\begin{tabular}{c}\\C\\\\\quad\end{tabular}}
+	\\ \hline
+SL &\scriptsize{\begin{tabular}{c}NC\\C\\R\\SC\end{tabular}}&
+	\scriptsize{\begin{tabular}{c}NC\\C\\R\\SC\end{tabular}}&
+	\scriptsize{\begin{tabular}{c}\\C\\\\SC\end{tabular}}&
+	\scriptsize{\begin{tabular}{c}\\C\\\\SC\end{tabular}}&
+	\scriptsize{\begin{tabular}{c}\\C\\\\SC\end{tabular}}&
+	\scriptsize{\begin{tabular}{c}\\C\\\\SC\end{tabular}}
+	\\ \hline
+TA &\scriptsize{\begin{tabular}{c}NC\\C\\R\\\quad\end{tabular}}&
+	\scriptsize{\begin{tabular}{c}NC\\C\\\\\quad\end{tabular}}&
+	\scriptsize{\begin{tabular}{c}\\\\\\\quad\end{tabular}}&
+	\scriptsize{\begin{tabular}{c}\\C\\\\\quad\end{tabular}}&
+	\scriptsize{\begin{tabular}{c}\\C\\\\\quad\end{tabular}}&
+	\scriptsize{\begin{tabular}{c}\\C\\\\\quad\end{tabular}}
+	\\ \hline
+TS &\scriptsize{\begin{tabular}{c}NC\\C\\\\\quad\end{tabular}}&
+	\scriptsize{\begin{tabular}{c}NC\\C\\\\\quad\end{tabular}}&
+	\scriptsize{\begin{tabular}{c}\\\\\quad\\\quad\end{tabular}}&
+	\scriptsize{\begin{tabular}{c}\\\\\\\end{tabular}}&
+	\scriptsize{\begin{tabular}{c}\\\\\\\end{tabular}}&
+	\scriptsize{\begin{tabular}{c}\\\\\\\end{tabular}}
+	\\ \hline\hline
+CA & ja & ja & ja & & &
+\end{tabular}
+\end{center}
+\end{table}
+
+Alle Verfahren zeigen die Eigenschaft, da"s die Anzahl der Elemente pro
+Cluster in der optimalen Partition etwa gleich gro"s ist. Dementsprechend
+sollten die Erwartungen an die Eingabedaten gestellt werden: Wenn
+mehrere Krankheitstypen in einer Elementmenge vermutet werden, so sollten
+diese etwa gleichh"aufig auftreten.
+
+Die {\bf Anzahl der Nachbarn} bei der Nearest--Cluster Nachbarschaft scheint in
+einer Gr"o"senordnung von 5 Nachbarn gen"ugend gro"s zu sein, um optimale
+L"osungen in einer gleichm"a"sig verteilten Elementmenge zu finden.
+Wenn Strukturen in der Menge existieren, kann diese Zahl sogar noch weiter
+gesenkt werden. Da wir vermutete Strukturen in einer medizinischen 
+Datenbank aufsp"uren wollen, werden wir uns auf eine Nachbaranzahl von
+maximal 5 betrachteten Nachbarn bei Nearest--Cluster beschr"anken.
+
+Die anderen beiden {\bf Single Nachbarschaften} (Centroid, Random) lieferten
+keine so guten Ergebnisse wie Nearest--Cluster; folglich werden wir
+Nearest--Cluster als die einzige Single Nachbarschaft verwenden.
+
+Bei den {\bf Simultaneous Nachbarschaften} konnte die Centroid Nachbarschaft
+klar "uberzeugen. Auch diese wollen wir auf die medizinischen Daten
+anwenden.
+
+Da sich die {\bf Zielfunktionen} $\sum\sum$ und $\sum\sum^2$ nicht wesentlich 
+voneinander unterscheiden,
+wollen wir uns bei diesen beiden im weiteren auf $\sum\sum$ beschr"anken.
+Die Maximierungszielfunktionen sind kein gutes Optimalit"atskriterium f"ur 
+ein einfaches Austauschverfahren, weil zu selten der Zielfunktionswert
+verbessert wird. Nur bei der Simultaneous Nachbarschaft waren diese
+Funktionen in der Lage optimale Ergebnisse zu finden. 
+Diese Zielfunktionen werden also nur unter Simultaneous--Centroid
+angewendet, ebenso wie die Funktion $\sum\frac 1n \sum$.
+
+Unter Verwendng der Nachbarschaft Simultaneous--Centroid k"onnen auch
+sehr gro"se Datenmengen in kurzer Zeit optimal partitioniert werden,
+da diese Nachbarschaft ein sehr gutes Konvergenzverhalten zeigt.
+
+Der Rechenaufwand der {\bf Algorithmen} liegt in der Bestimmung des
+Zielfunktionswertes, was sich gut erkennen l"a"st, wenn man statt einer
+zwei Zielfunktionen bei der Berechnung aktiviert.
+
+Die Tabu Suche lieferte h"aufig L"osungen, die eine geringere Clusteranzahl
+besa"sen, als festgelegt. Dies wurde in der Implementierung abgefangen,
+so da"s nur L"osungen mit der gew"unschten Clusteranzahl zul"assig sind.
+
+Im folgenden Kapitel sollen alle Algorithmen angewandt werden,
+wobei wir erwarten, da"s
+Simulated Annealing / Localopt und Combined Alogorithms
+die besten Ergebnisse liefern, wobei ersterer die l"angere
+Rechenzeit beanspruchen wird.
+
+Hier die "Ubersicht, welche Kombinationen
+getestet werden sollen:
+
+\begin{center}
+\begin{tabular}{l||c|c|c|c|c|c}
+   & $\sum\sum$ & $\sum\frac 1n \sum$ & $\max\sum$ & $\sum\max$ & $\max\max$\\
+\hline\hline
+LS &\scriptsize{\begin{tabular}{c}NC\\SC\end{tabular}}&
+	\scriptsize{\begin{tabular}{c}\\SC\end{tabular}}&
+	\scriptsize{\begin{tabular}{c}\\SC\end{tabular}}&
+	\scriptsize{\begin{tabular}{c}\\SC\end{tabular}}&
+	\scriptsize{\begin{tabular}{c}\\SC\end{tabular}}
+	\\ \hline
+II &\scriptsize{\begin{tabular}{c}NC\\SC\end{tabular}}&
+	\scriptsize{\begin{tabular}{c}\\SC\end{tabular}}&
+	\scriptsize{\begin{tabular}{c}\\SC\end{tabular}}&
+	\scriptsize{\begin{tabular}{c}\\SC\end{tabular}}&
+	\scriptsize{\begin{tabular}{c}\\SC\end{tabular}}
+	\\ \hline
+SA &\scriptsize{\begin{tabular}{c}NC\\\quad\end{tabular}}&
+	\scriptsize{\begin{tabular}{c}\\\quad\end{tabular}}&
+	\scriptsize{\begin{tabular}{c}C\\\quad\end{tabular}}&
+	\scriptsize{\begin{tabular}{c}C\\\quad\end{tabular}}&
+	\scriptsize{\begin{tabular}{c}C\\\quad\end{tabular}}
+	\\ \hline
+SL &\scriptsize{\begin{tabular}{c}NC\\SC\end{tabular}}&
+	\scriptsize{\begin{tabular}{c}\\SC\end{tabular}}&
+	\scriptsize{\begin{tabular}{c}C\\SC\end{tabular}}&
+	\scriptsize{\begin{tabular}{c}C\\SC\end{tabular}}&
+	\scriptsize{\begin{tabular}{c}C\\SC\end{tabular}}
+	\\ \hline
+TA &\scriptsize{\begin{tabular}{c}NC\\\quad\end{tabular}}&
+	\scriptsize{\begin{tabular}{c}\\\quad\end{tabular}}&
+	\scriptsize{\begin{tabular}{c}C\\\quad\end{tabular}}&
+	\scriptsize{\begin{tabular}{c}C\\\quad\end{tabular}}&
+	\scriptsize{\begin{tabular}{c}C\\\quad\end{tabular}}
+	\\ \hline
+TS &\scriptsize{\begin{tabular}{c}NC\\\quad\end{tabular}}&
+	& & & 
+	\\ \hline\hline
+CA & ja & ja & ja & & &
+\end{tabular}
+\end{center}

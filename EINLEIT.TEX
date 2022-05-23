@@ -1,0 +1,98 @@
+\chapter*{Einleitung}
+\addcontentsline{toc}{chapter}{Einleitung}
+
+In der Medizin stellt sich immer wieder das Problem,
+anhand von bekannten Faktoren eine Krankheitsdiagnose zu erstellen.
+Diese Faktoren k"onnen numerische Daten (z.B. Cholesterinwert),
+Zustandswerte (z.B. ja oder nein) oder bestimmte Erscheinungformen
+(z.B. Krankheit A oder B oder C) sein.
+
+Diese Arbeit soll nun ein Hilfsmittel zur Verf"ugung stellen, mit dessen Hilfe
+solche Entscheidungen leichter gef"allt werden k"onnen:
+Ein Patient mit einer gewissen Merkmalsstruktur wird einer
+Gruppe von Patienten zugeordnet, die "ahnliche Eigenschaften aufweisen.
+Wir haben es also mit einem {\em Klassifikationsproblem} zu tun, zu dessen
+L"osung Methoden der {\em Lokalen Suche} verwendet werden sollen;
+im Gegensatz zu den statistischen Verfahren aus den 70er Jahren, mit
+denen sich bereits viele Autoren eingehend besch"aftigt haben.
+
+Das so entwickelte Softwarepaket \Clustering\ soll einer breiten
+Anwenderschicht zur Verf"ugung gestellt werden k"onnen, und wurde deswegen
+auf einem Personal Computer unter der grafischen Oberfl"ache 
+ Windows\footnote{Windows ist ein eingetragenes Zeichen
+der Microsoft Corporation} entwickelt.
+
+%Das Programm \Clustering\, das diese Zuordnung vornimmt, erstellt anhand von zu
+%w"ahlenden Merkmalen "uber alle Patienten eine Partitionierung in beliebig
+%viele Gruppen (Cluster), sagen wir soviele, wie Krankheiten erwartet werden.
+
+%Da das Programm vornehmlich von Medizinern genutzt werden soll, 
+%und Personal Computer immer gr"o"seren Einzug in Bur"os gehalten haben,
+%sollte \Clustering\ auf einem solchen Personal Computer entwickelt
+%werden, und der Benutzerfreundlichkeit halber unter der grafischen
+%Oberfl"ache Windows\footnote{Windows ist ein eingetragenes Zeichen
+%der Microsoft Corporation} lauff"ahig sein.
+
+In dieser Arbeit werden zun"achst in Kapitel 1
+ Klassifikationsprobleme allgemein besprochen:
+Diese sind dadurch charakterisiert, da"s man eine
+gegebene endliche Menge von Elementen derart in Teilmengen zerlegen 
+m"ochte, da"s diese Teilmengen unter einem bestimmten 
+Kriterium optimal sind. In dieser Arbeit werden wir
+uns darauf beschr"anken, da"s die Vereinigung all dieser Mengen
+stets die ganze Menge ist, und die Teilmengen nicht leer sind.
+
+Das Optimalit"atskriterium wird durch eine Zielfunktion dargestellt, 
+mit deren Hilfe es m"oglich ist,
+heuristische Verfahren zu entwickeln, die nicht unbedingt die optimale
+L"osung finden aber gute brauchbare.
+Hierzu verwendet diese Arbeit das Prinzip der {\em Lokalen Suche}, 
+das in Kapitel \ref{lokalesuche} n"aher beschrieben wird.
+Grundlegend sind hierf"ur Nachbarschaftsstrukturen, die wir dort
+ausf"uhrlich diskutieren werden.
+Kriterien f"ur dieses Verfahren sind 
+%seine gute Anwendbarkeit auf mehrdimensionale Daten und 
+seine Anwendbarkeit auf sehr gro"se Datenmengen im
+Gegensatz zu exakten Verfahren, und
+vor allem die Flexibilit"at durch seine
+Zufallssteuerung, die es erm"oglicht auch unscheinbare optimale 
+L"osungen zu finden.
+
+In Kapitel 3 wird dann das Programm \Clustering\ vorgestellt.
+Nach einer Erl"auterung der implementierten Datenstrukturen
+und Algorithmen folgt eine genaue Programmbeschreibung.
+ %der
+%beiden Programmversionen: Die erste stellt das Testprogramm der
+%Algorithmen und Nachbarschaftsstrukturen dar, die zweite Version
+%ist das Softwarepaket f"ur den Anwender, in das die Programmteile
+%eingeflossen sind, die sich als am besten herauskristallisiert haben.
+
+Im vierten Kapitel wird das Programm \Clustering\ anhand von k"unstlich
+generierten Eingabedaten getestet. Es sollen dabei Kenntnisse "uber
+gute Kombinationen von Zielfunktion, Nachbarschaft und Suchverfahren
+gewonnen werden.
+
+Diese Verfahren werden dann im f"unften Kapitel auf die medizinischen
+Daten angewandt. Dabei wird sich zeigen, welche Informationen mit
+\Clustering\ gewonnen werden k"onnen.
+
+Den Schlu"s der Arbeit bilden eine kurze Zusammenfassung und einige 
+Bemerkungen zu den medizinischen Daten.
+
+Anwendungen f"ur eine Software, die Klassifikationsprobleme l"ost,
+hierzu gibt es nicht nur in der Medizin, sondern auch z.B. 
+bei Chemikern, die Stoffe mit "ahnlichen Eigenschaften gruppieren, 
+oder auch in der Musik, um Musikst"ucke anhand von Lautst"arke, 
+Tonfolgen, Rhythmen oder "ahnlichem in  verschiedene Kategorien einzuordnen.
+%Kinderlieder oder  Pop zu ordnen.
+
+%Mit Klassifikationsproblemen haben sich bereits viele Autoren
+%eingehend be\-sch"af\-tigt, vor allem in den 70'er Jahren. 
+%Es wurden haupts"achlich statistische Verfahren aus dem
+%Bereich der Wahrscheinlichkeitstheorie und Statistik entwickelt.
+%%Wir wollen nun in dieser Arbeit moderne Methoden der Lokalen
+%Suche verwenden.
+
+An dieser Stelle m"ochte ich Herrn Prof. Dr. Brucker
+f"ur die interessante Themenstellung und die Betreuung w"ahrend
+der Arbeit bedanken.

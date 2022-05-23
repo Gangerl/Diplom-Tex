@@ -1,0 +1,118 @@
+\newcommand{\MAXCLUSTER}{15}
+
+
+Die \verb-Werte fuer Anzeige- sind dabei auf 3 beschr"ankt (jeder
+ben"otigt eine Dimension), w"ahrend zur Berechnung beliebig viele
+Werte ausgew"ahlt werden k"onnen: Die weitere Auswahl
+unter \verb-weitere Werte- erfolgt durch Klicken  mit der Maus
+bei gleichzeitigem Dr"ucken der \verb-SHIFT-, bzw. \verb-Umschalt--Taste.
+
+
+
+
+
+Dies ist allerdings nur dann m"oglich, wenn die so gew"ahlte Clusteranzahl
+die H"ochstm"ogliche von \MAXCLUSTER nicht "uberschreitet.
+
+
+
+
+
+Eine solche Clusterung ist auch immer dadurch zu erzielen, da"s man im
+Werte-Auswahl-Men"u unter \verb-Werte fuer Berechnung- nur einen Wert, 
+n"amlich den, der gerade vertikal verl"auft, angibt. Als Zielfunktion
+(siehe \ref{Zielfunktionenkapitel}) sollte dabei m"oglicht \verb-SS-
+gew"ahlt werden.
+
+
+\item[Unterbereiche] Mit diesem Men"u ist es m"oglich solche Datens"atze
+	von der Berechnung auszuschliessen, die unter einem betimmten
+	Merkmal eine bestimmten Wert aufweisen.
+
+	Beispielsweise hat ein Merkmal die Auspr"agungen \verb-Ja- und 
+	\verb-Nein- und durch Marikieren von \verb-Nein- bleiben alle
+	die Datens"atze unber"ucksichtigt, die dieses \verb-Nein-
+	besitzen.
+
+	In der Grafik werden weiterhin alle Punkte angezeigt, jedoch
+	erscheinen diese "`passiven"' Punkte in wei"s.
+
+	Dem Benutzer wird dadurch die M"oglichkeit gegeben, Abh"agigkeiten, 
+	die nur in eine Untergruppe, z.B. Nichtrauchern, auftreten, 
+	herauszufinden.
+
+\subsubsection{Optionen}
+\label{Zielfunktionenkapitel}
+\begin{description}
+\item[Alpha's und Suchalgorithmus] sind noch nicht endg"ultig und sollten
+	bitte weder benutzt noch ver"andert werden. Ausnahme ist, da"s als
+	Algorithmus auch \verb-Simulated Annealing mit Lokaler Suche-
+	verwendet werden kann.
+\item[Clusteranzahl] Hier kann man die gew"unschte Anzahl der Cluster
+	eingeben, Voreinstellung ist 3, Maximalanzahl \MAXCLUSTER.
+\item[Wichtung (Zielfunktionen)] Durch Anw"ahlen dieses Punktes (oder
+	durch Dr"ucken der mittleren Maustaste, soweit vorhanden) erscheint
+	ein Men"u, in dem die Wichtung der Zielfunktionen gegeneinander
+	ge"andert werden kann.
+
+	Die Bedeutung der einzelnen Zielfunktionen:
+	\begin{itemize}
+	\item {\bf SS}\\
+		Es wird erst die Summe der euklidischen Abst"ande innerhalb
+		der Cluster gebildet, und diese dann aufsummiert.
+		Diese Zielfunktion liefert, wie auch die n"achste, in erster
+		Linie Cluster m"oglicht gleicher Gr"o"se, die ann"ahernd
+		konvexe Formen aufweisen. (Summe-Summe)
+	\itemv {\bf SS\^2}\\
+		Wie \verb-SS-, jedoch werden in der Clustern die 
+		quadratischen Abst"ande summiert. (Summe-Quadrat)
+	\item {\bf S 1/n*S}\\
+		Hierbei wird die Summe in den Clustern noch durch die Anzahl
+		der im Cluster vorhandenen Punkte dividiert - es erfolgt
+		also eine Art Mittelung. Es zeigt sich, da"s hierbei
+		F"alle auftauchen k"onnen, da"s einer oder mehrer Cluster
+		nur noch aus einem einzigen Punkt bestehen!
+		(Summe-1/n Summe)
+	\item {\bf max S}\\
+		Bei dieser Zielfunktion wird einfach das Maximun der Summen
+		der Cluster betrachtet.  Auch dieses Verfahren terminiert
+		i.a. nicht mit einem brauchbaren Ergebnis. (Max-Summe)
+	\item {\bf S max}\\
+		Wie sich nun leicht vermuten l"a"st, wird nun die Summe
+		der Maxima in der Clusterm berechnet. D.h., da"s der
+		Lokale-Suche-Algorithmus recht schnell terminiert, da ein
+		Verschieben von Clusterpunkten, die nicht am 
+		Zielfunktionswert beiteiligt sind, diesen nicht verbessern.
+		W"ahlen von Simulated Anneling als Algorithmus schafft
+		hier Abhilfe, jedoch tritt wieder das Ph"anomen auf, da"s 
+		Cluster zu sogenannten trivialen Clustern, n"amlich aus
+		einem Punkt bestehend, entarten k"onnen.
+		(Summe-Max)
+	\item {\bf max max}\\
+		Bei dieser Wahl terminiert Lokale Suche am schnellsten mit
+		einer unbrauchbaren L"osung. Diese Zielfunktion ist 
+		nicht zu empfehlen. (Max-Max)
+	\end{itemize}
+
+	Die Zielfunktionen k"onnen beliebig kombiniert und gegeneinander
+	gewichtet werden (dazu dienen die Zahlen - eine 0 bedeutet, 
+	da"s dieses Zielfunktion nicht beachtet wird); der Vielfalt
+	des Benutzers sind dabei kaum Grenzen gesetzt.
+
+	Die Voreinstellung ist \verb-SS- und hat sich als recht brauchbar
+	erwiesen.
+
+\item[Nachbarschaft] Drei Nachbarschaften stehen hier zur Auswahl, wobei
+	sich die voreingestellte -\verb-naechster Cluster-- als am 
+	g"unstigsten erwiesen hat. N"aheres siehe hierzu in den Ausf"uhrungen
+	der Diplomarbeit.
+\item[Anfangspartition] Dieser Schalter hat die geringste Funktion und dient
+	nur zu Testzwecken. Einstellung beliebig.
+\end{description}
+
+
+
+\subsubsection{Hilfe}
+
+Wird noch ausgearbeitet.
+

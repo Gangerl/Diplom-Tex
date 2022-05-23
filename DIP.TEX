@@ -1,0 +1,57 @@
+\documentstyle[12pt,german,a4,algo]{report}
+%\documentstyle[12pt,german,theorem,fleqn,a4,algo]{report}
+\parindent 0em
+\parskip 1.5ex plus 0.5ex minus 0.1ex
+
+\def\bslashfrac#1#2{\mathchoice{\dbslashfrac{#1}{#2}}{\tbslashfrac{#1}{#2}}{\sbslashfrac{#1}{#2}}{\sbslashfrac{#1}{#2}}}
+\def\dbslashfrac#1#2{\leavevmode\kern 0.1em
+  \lower 1ex\hbox{$#1$}\kern -0.2em
+  \Big\backslash\kern -0.3em\raise 1ex\hbox{$#2$}}
+\def\tbslashfrac#1#2{\leavevmode\kern 0.1em
+  \lower 0.25ex\hbox{$\scriptstyle#1$}\kern -0.075em
+  \backslash\kern -0.1em\raise 0.5ex\hbox{$\scriptstyle#2$}}
+\def\sbslashfrac#1#2{\leavevmode\kern 0.1em
+  \lower 0.25ex\hbox{$\scriptscriptstyle#1$}\kern -0.05em
+  {\scriptstyle\backslash}\kern -0.1em\raise 0.375ex\hbox{$\scriptscriptstyle#2$}}
+
+\def\binom#1#2{{#1\choose#2}}
+\def\dbinom#1#2{{\displaystyle{#1\choose#2}}}
+
+\newtheorem{satz}{Satz }[chapter]
+\newtheorem{lemma}[satz]{Lemma }
+\newtheorem{definition}[satz]{Definition }
+\newtheorem{bezeichnung}[satz]{Bezeichnung }
+%\theoremstyle{plain}  \newtheorem{beis}[satz]{Beispiel }
+%\theoremstyle{break}  \newtheorem{beme}{Bemerkung }[section]
+%\renewcommand{\thebeme}{}
+
+\newcommand{\G}{{\cal G}}
+\newcommand{\NP}{$\cal NP$}
+\newcommand{\R}{{\rm I\!R}} 
+\newcommand{\N}{{\rm I\!N}} 
+\newcommand{\Clustering}{{\sl Clustering}} 
+\newcommand{\MAXCLUSTER}{3} 
+\newcommand{\alphared}{\,\propto\,}
+%\newcommand{\alphared}{\mbox{\,\raisebox{0.4ex}{$\scriptstyle\alpha$}\,}}
+%\pagestyle{headings} 
+
+\begin{document}
+%\input titel
+%\input vor
+%\tableofcontents
+%\input einleit
+
+\addtocounter{page}{53}
+\addtocounter{chapter}{3}
+%\input kap1
+%\input kap2
+%\input kap3
+\input kap4
+%\input kap5
+%\input kap6
+
+%\input literat
+%\input anhang
+
+%\newpage\input erkl
+\end{document}

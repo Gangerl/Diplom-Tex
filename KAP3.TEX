@@ -1,0 +1,553 @@
+\chapter{Entwicklung und Handhabung von \Clustering}
+Nach den allgemeinen Darstellungen aus Kapitel 1 und 2 sind wir nun
+in der Lage uns konkret mit dem medizinischen Problem zu
+besch"aftigen. Im ersten Teil dieses Kapitels werden
+Hinweise zur Implementierung, wie die Speicherung der Daten und 
+Startl"osungen gegeben. Anschlie"send folgen 
+einige spezielle Forderungen an das Programm, die aus der Sicht der
+Medizin und der Testbarkeit entstanden sind.
+Am Ende folgt dann das Handbuch zum Programm \Clustering.
+
+\section{Eingabedaten und Skalierung}
+Als Grundlage f"ur die Berechnung m"ussen die $n$ Datens"atze mit 
+jeweils $m$ Werten in einer Datenmatrix $X=(x_{ij}) \  (i=1,\dots,n;
+\,j=1,\dots,m)$ erfa"st sein, wobei die $x_{ij} \in \R$ sind.
+Um eine gleichm"a"sige Wichtung aller Daten zu erhalten, mu"s eine
+Skalierung auf das Einheitsintervall durchgef"uhrt werden, d.h.
+$x_{ij} \in [0,1]$.
+
+Die Daten kann man in verschiedene Klassen einteilen:
+\begin{description}
+\item[klassifikatorische Daten,] wie zum Beispiel Blutgruppe
+	(endliche viele M"oglichkeiten) oder Fingerabdruck (unendlich
+	viele M"og\-lich\-kei\-ten),
+\item[komparative Daten,] die auf Skalen angegeben werden k"onnen 
+	wie Schulnoten oder Intelligenzquotient,
+\item[metrische Daten,] zum Beispiel Temperatur in $ ^\circ C$.
+\end{description}
+Diese drei Merkmalstypen reichen uns zur Beschreibung 
+der Eingabe medizinischer Daten aus.
+Klassifikatorische Daten sind bei uns im allgemeinen
+Strings (Text), komparative Daten ganzzahlige Werte und metrische Daten
+werden durch Gleitkommazahlen dargestellt.
+
+Das Programm \Clustering\ zeigt bei der Visualisierung der Daten und des
+Rechenprozesses jeweils das gesamte Intervall von 0 bis 1 auf dem
+Bildschirm an. Im Hinblick auf eine gute Darstellbarkeit der Daten
+werden die Werte 0 und 1 bei der Skalierung ausgeklammert, 
+damit keine Daten auf dem Rand des Fensters liegen.
+
+F"ur Integerzahlen, die eingelesen werden, bedeutet dies, da"s bei einer
+Normierung der Daten nicht einfach der Quotient
+\[ \frac{\mbox{Merkmalswert} - \mbox{kleinster Merkmalswert}}
+	    {\mbox{gr"o"sten} - \mbox{kleinsten Wert dieses Merkmals}} \]
+benutzt werden kann, sondern es m"ussen erst ein Maximum und Minimum
+definiert werden:
+\begin{eqnarray*}
+	\mbox{Maximum} & = & \mbox{gr"o"ster Wert} + 1, \\
+	\mbox{Minimum} & = & \mbox{kleinster Wert} - 1.
+\end{eqnarray*}
+Nun erh"alt man f"ur den skalierten Wert $x$ einer Eingabe $e$ den 
+Ausdruck
+\[ x \ = \ \frac{\mbox{ Integerwert von $e$} - \mbox{Minimum}}
+		        {\mbox{Maximum} - \mbox{Minimum dieses Merkmals}}\ . \]
+
+Untersuchungen von Milligan \& Cooper [1988] haben ergeben, da"s eine
+solche Normierungsweise am erfolgsversprechendsten ist.
+Gleitkommazahlen werden in "ahnlicher Weise behandelt: 
+F"ur unsere Zwecke ist es ausreichend, die Zahl nur bis zur 3.
+Nachkommastelle zu betrachten, dies dann mit dem Faktor 1000 zu
+multiplizieren und als ganze Zahl zu interpretieren.
+Dann kann obiges Verfahren angewandt werden.
+%Da wir uns 
+%nicht mit Daten besch"aftigen wollen, bei denen es auf die vierte 
+%Nachkommastelle ankommt, multiplizieren wir den Gleitkommawert mit
+%dem Faktor 1000 und interpretieren diese Zahl als ganze Zahl. 
+%Dann k"onnen wir obiges Verfahren wieder anwenden.
+
+Bei nichtnumerischen Werten gestaltet sich der Unmrechnungsproze"s 
+etwas schwieriger:
+Wir ordnen jeder Merkmalsauspr"agung einen ganzzahligen Wert
+folgenderma"sen zu:
+Jeder neuen Merkmalsauspr"agung eines Merkmals wird die derzeitige
+Anzahl der Auspr"agungen $+ 1$ zugeordnet. Das hei"st, da"s der
+kleinste zugewiesene Wert die 1, der gr"o"ste die Anzahl der 
+Auspr"agungen ist. Auf diese Darstellung 
+%k"onnen wir obige Skalierung anwenden.
+kann wiederum die Skalierung angewandt werden. Hierbei allerdings
+das Problem auf, da"s bei mehr als zwei Auspr"agungen diese 
+keine gleichen Absta"ande mehr zueinander aufweisen. Da es sich aber i.a.
+um Auspr"agungen der Form "`ja"' und "`nein"' handelt, vernachl"assigen
+wir dies.
+
+
+Ein kleines Beispiel:\\
+Die Integerzahlen 1, 3 und 4 werden auf 0.2, 0.6 und 0.8,\\
+die Integerzahlen 2 und 4 auf 0.25 und 0.75,\\
+die Gleitkommazahlen 0.1, 0.2 und 0.3 auf 1/202, 102/202 und 201/202,\\
+die Werte "`ja"' und "`nein"' auf 1/3 und 2/3 abgebildet.
+
+Einzige Einschr"ankung, die diese Verfahren mit sich bringt, ist, 
+da"s alle Zahlenwerte $> 0$ sein m"ussen.
+Bei weit streuenden Zahlenwerten kann es angebracht sein erst eine
+Logarithmierung der Daten vorzunehmen, damit diese besser
+gleichverteilt sind. Denn sonst kann eine Verf"alschung der Distanz
+zweier Objekte zueinander durch die Skalierung eintreten.
+
+\section{Datenstrukturen}
+Die gesamt Speicherverwaltung erfolgt dynamisch, das hei"st es k"onnen
+Datenfelder von beinahe beliebiger Gr"o"se eingelesen und verarbeitet werden.
+Da das Programm unter Windows 3.1 entwickelt wurde und das Betriebssystem
+virtuellen Speicher zur Verf"ugung stellt, entfallen sowohl die sonst f"ur
+Personal--Computer unter DOS oft schmerzhafte 640KB--Grenze, als
+auch die Hauptspeichergr"o"se.
+Die Speicherallokierung basiert weiterhin auf 32--Bit--Zeigern, so da"s
+problemlos Speicherbl"ocke gr"o"ser als 64KB verwendet werden k"onnen.
+Dies ist auch im Hinblick sp"aterer Portierungen auf 32--Bit Systeme
+(Windows 95, Windows NT, OS/2) geschehen.
+Die Einhaltung der Regeln f"ur die verschiedenen Speichermodelle des
+Windows--Systems erwies sich dabei als "au"serst t"uckisch!
+
+Die Darstellung der Cluster im Rechner erfolgt folgenderma"sen:
+Die globalen Integer--Variablen {\tt anzahl, werteanz} und {\tt clusteranz}
+speichern die Anzahl der Datens"atze, die Anzahl der Merkmale und die
+gew"ahlte Clusteranzahl. Eine Partitionierung wird nun durch den Typen
+{\tt Loesung} beschrieben, der wie folgt aufgebaut ist:
+
+\begin{verbatim}
+TYPE Loesung = RECORD
+    cluster        : ARRAY [1..clusteranz][1..anzahl] OF INTEGER;
+    anz_in_cluster : ARRAY [1..clusteranz] OF INTEGER;
+    in_cluster     : ARRAY [1..anzahl] OF INTEGER;
+    zfktwert       : REAL;
+END;
+\end{verbatim}
+Das 2D--Feld {\tt cluster} enth"alt in der $i$--ten Zeile die Elemente,
+die im Cluster $i$ liegen und hat somit {\tt clusteranz}--viele Zeilen.
+{\tt anz\_in\_cluster} enth"alt die Anzahl der Elemente in jedem Cluster, 
+damit Operationen wie "`Einf"ugen von Elementen in den Cluster"' effizient
+ausgef"uhrt werden k"onnen.
+Das Feld {\tt in\_cluster} enth"alt die umgekehrte Information: 
+In Speicherstelle $i$ steht in welchem Cluster sich das Element $i$ gerade
+befindet.
+Durch diese zweifache Darstellung f"allt zwar ein gewisser "`Overhead"' bei
+der  Speicherverwaltung an, der aber durch einen effizienteren Zugriff mehr als
+wett gemacht wird. 
+Die Gleitkommazahl {\tt zfktwert} enth"alt den aktuellen 
+Zielfunktionswert dieser Partitionierung.
+
+Die Speicherung der Daten in Listen, 
+an Stelle von gen"ugend gro"sen Arrays, 
+w"are zwar beim Autor sehr beliebt gewesen, 
+doch fordert Windows einen zu gro"sen Aufwand
+bei dynamischer Speicherverwaltung.
+
+Die eingelesenen, bzw. modifiziert eingelesenen Integerwerte werden in 
+einem Feld {\tt input} der Gr"o"se 
+{\tt anzahl$\times$clusteranz} gespeichert;
+die dazugeh"origen Strings von Texteingaben finden sich in einer
+sogenannten String--Tabelle, auf die man mit den entsprechenden
+Integerwerten zugreift. Weiter gibt es ein ebenso gro"ses Feld mit
+Gleitkommazahlen, das die normierten Werte enth"alt.
+Dazu kommt dann noch die symmetrische Distanzmatrix, die sich aufgrund
+ihrer Symmetrie besser in einer Dreiecksmatrix, also einem linearen
+Array mit Makrozugriff speichern l"a"st.
+
+\section{Startl"osungen}
+Auf einen ausgefeilten Startl"osungsmechanismus wurde verzichtet, um nicht
+durch eine vorgegebene Ausgangslage den Algorithmus negativ zu beeinflussen.
+Vielmehr sollten dem Algorithmus sehr unterschiedliche Startsituationen
+zug"anglich gemacht werden, damit er in mehreren Durchl"aufen bessere
+Chancen hat das Optimum zu finden. Somit hat sich als echte unabh"angige
+Startl"osung nur das Verfahren Random erwiesen:
+
+\begin{algorithm*}
+PROCEDURE Startl"osung\_Random (VAR start:Loesung);\\
+BEGIN
+\begin{Block}
+	Initialisiere anz\_in\_cluster mit Nullen;\\
+	FOR i := 1 TO anzahl DO BEGIN
+	\begin{Block}
+		cluster := Rand(1,clusteranz);\\
+		start.in\_cluster[i] := cluster;\\
+		start.cluster[cluster][anz\_in\_cluster[cluster]] := i;\\
+		INC(start.anz\_in\_cluster[cluster]);
+	\end{Block}
+	END;\\
+	Berechne Zielfunktionswert von start;
+\end{Block}
+END;
+\end{algorithm*}
+
+Rand(a,b) liefere dabei eine ganzzahlige Zufallszahl zwischen a und b
+einschlie"slich.
+
+\begin{figure}[htp]
+\[
+\psfig{figure=b3-6.ps}
+\]
+\caption{Nat"urliche Verteilung}
+\end{figure}
+
+
+
+\section{Spezielle Programmanforderungen}
+Da wir uns speziell mit Daten aus der Medizin besch"aftigen wollen,
+brauchen wir noch einige besondere Programmeigenschaften. Dies sind
+{\em beliebige Dimensionalit"at}, {\em Subklassenauswahl} und {\em
+Zielfunktionenwichtung}.
+
+Beliebige Dimensionalit"at hei"st, da"s der Benutzer unter den Werten
+w"ahlen k"onnen soll, welche davon zur Abstandsbestimmung
+herangezogen werden. So brauchen die Datens"atze nicht
+ver"andert zu werden, wenn ein bestimmtes Merkmal nicht mehr ber"ucksichtigt
+werden soll. Entsprechend kann der Benutzer auch die Werte, die auf dem 
+Schirm dargestellt werden, frei w"ahlen. Dies ist zum Beispiel dann
+n"utzlich, wenn er eine Partitionierung nach 2 Merkmalen vornimmt, sich
+davon "uberzeugt, da"s diese Clusterung in Ordnung ist, und dann
+auf eine andere Ansicht umschaltet, um Zusammenh"ange zu anderen 
+Merkmalen feststellen zu k"onnen.
+
+Die Subklassenauswahl ist eine noch feinere Differenzierung, welche
+Punkte und Werte zur Berechnung herangezogen werden sollen.
+Hierbei k"onnen Datens"atze g"anzlich unber"ucksichtigt bleiben, wenn
+sie bei einem bestimmten Merkmal einen ganz bestimmten Wert aufweisen.
+Hat man z.B. das Gef"uhl, das alle Raucher eine vern"unftige
+Partitionierung verhindern, da sie z.B.	Ausrei"ser produzieren, so
+entscheidet man nur Nichtraucher zu betrachten. 
+Dies ist auch sehr n"utzlich, um festzustellen, ob bekannte
+Zusammenh"ange in beiden Gruppen (Raucher und Nichtraucher) auftreten,
+oder ob sie eine spezielle Charakteristik einer dieser Gruppen sind.
+
+Unter Zielfunktionenwichtung versteht man, da"s die Zielfunktionen auch
+kombiniert verwendet werden k"onnen. Gibt es z.B. drei Funktionen, 
+die eine ganz bestimmte Menge auf drei verschiedene Weisen ganz gut
+partitionieren, so hat man das Bed"urfnis, das Ergebnis herauszufinden, 
+wenn man alle drei Funktionen gleichzeitig verwendet.
+Das Programm soll also eine M"oglichkeit zur Verf"ugung stellen, die
+Zielfunktionen beliebig zu kombinieren und gegeneinander wichten 
+zu k"onnen.
+
+Eine kleine, bei langen Berechnungen aber sehr n"utzliche,
+Eigenschaft sollte sein:
+Au"ser den eingebauten Abbruchkriterien der Algorithmen soll der Benutzer
+jederzeit die M"oglichkeit haben durch Dr"ucken der linken Maustaste den
+Rechenvorgang zu beenden.
+
+\section{Die Inputdatei}
+Um die Inputdatei, die die Daten enth"alt, nicht zu aufwendig einlesen
+zu m"ussen werden an sie folgende Forderungen gestellt:
+
+\begin{itemize}
+\item ASCII--Datei,
+\item Kommentarzeilen beginnen mit \#,
+\item 1. Zeile enth"alt die Anzahl der Datens"atze,
+\item 2. Zeile beschreibt das Format der Merkmale (s.u.),
+\item 3. Zeile enth"alt die Merkmal"uberschriften durch 
+	Semikola voneinander getrennt (Titelzeile),
+\item alles weiteren Zeilen entsprechen den  Datens"atze, wobei 
+	die Merkmale jeweils durch Semikola getrennt sein m"ussen,
+\item es d"urfen keine Leerzeichen oder Tabs (Whitespaces)
+	auftreten.
+\end{itemize}
+
+\subsection*{Die Formatzeile}
+Diese Zeile beschreibt den Aufbau der Datens"atze, d.h. sie legt fest,
+wie die Werte der einzelnen Spalten zu interpretieren sind.
+Eine $0$ steht f"ur ganze Zahlen (Integer),
+eine $1$ steht f"ur Gleitkommazahlen (Real), wobei die Dezimalstelle durch 
+	einen Punkt "`."' darzustellen ist,
+eine $2$ steht f"ur Text (Strings), der keine Leerzeichen enthalten darf. 
+(Man schreibe stattdessen z.B. einen Unterstrich "`\_"'.)
+
+Es d"urfen  auch mehr als die in der Formatzeile angegebenen Merkmale
+in einem Datensatz auftauchen; diese bleiben dann aber unber"ucksichtigt.
+
+Als sinnvoll hat sich erwiesen, den Zeilen an erster Stelle eine laufende
+Nummer zu geben, um die Datens"atze sp"ater besser wiederfinden zu
+k"onnen.
+
+\subsection*{Beispiel einer Eingabe}
+
+\begin{verbatim}
+#Datei_vom_5.11.__-__Krankheiten
+#
+10
+020212
+Nummer;Geschlecht;Alter;Demenz;Zahl;erkrankt?
+1;m;86;MID;5.4;ja
+2;f;86;MID;4.8;nein
+3;m;76;MID;5.1;ja
+4;m;79;SD;4.2;nein
+5;f;86;SD;4.8;nein
+6;m;87;SD;4.5;ja
+7;m;89;SD;3.9;nein
+8;f;83;MID;5.5;ja
+9;m;83;MID;5.5;nein
+10;m;70;SD;5.0;nein
+\end{verbatim}
+
+\section{Handbuch zu  \Clustering}
+\label{handbuch}
+Durch dieses Handbuch soll dem Benutzer der Umgang mit \Clustering\
+erleichert werden. Er soll ohne weitere Vorkentnisse in der Lage sein
+mit \Clustering\ arbeiten zu k"onnen. Die grafische Oberfl"ache soll 
+unter Verwendung der "`Online--Hilfe"' weitgehend selbsterkl"arend sein,
+da sie auch den Standard Windows--Applikationen weitesgehend 
+entspricht. Ein kleines Handbuch sollte jedoch trotzdem nicht fehlen.
+
+Die Realisierung des Programms erfolgte mit Hilfe von {\sc Borland} C++ 4.0
+for Windows.
+W"ahrend der Entwicklung zeigt sich, da"s dies keine gute Wahl war, denn
+es traten einige Compiler--Schw"achen und --Fehler auf, die die
+Entwicklungszeit nicht unerheblich verl"angert haben.
+
+Nach dem Programmstart meldet sich
+\Clustering\ mit dem Fenster aus Abbildung \ref{startfenster}.
+
+\begin{figure}[ht]
+	\[ \epsfxsize=10cm \epsfbox{startfen.ps} \]
+	\caption{\Clustering\ nach dem Programmaufruf 
+	\label{startfenster}}
+\end{figure}
+
+\subsection*{Das {\tt Datei}--Men"u}
+Es folgt eine Beschreibung der Men"upunkte des Men"us {\tt Datei}:
+\begin{itemize}
+\item "Uber {\tt "offnen} (oder Taste {\tt F3})  kann eine Datei
+	geladen werden. Diese mu"s obigem Format entsprechen.
+	 Sollte dies nicht m"oglich sein, entweder weil die Angaben
+	der Formatzeile falsch sind oder g"anzlich fehlen, wird eine
+	entsprechende Fehlermeldung ausgegeben.
+	Es ist weiter nicht m"oglich, Dateien einzulesen, bei denen eine
+	Merkmalsspalte stets den gleichen Eintrag enth"alt (z.B.
+	Geschlecht: m"annlich). Dies scheint auch zur Auswertung der Daten
+	nicht sinnvoll zu sein, da es sich nicht um ein pr"agendes 
+	Merkmal handeln kann.
+\item {\tt Clipboard:} Der derzeitige Fensterinhalt wird in das
+	Windows--Clipboard kopiert, um von dort aus z.B. mit einem Grafikprogramm
+	aufbereitet zu werden.
+\item {\tt Drucken:} Die zur Zeit angezeigte Grafik und der dazugeh"orige Text 
+	werden auf dem Windows--Standard--Drucker mit Hilfe des 
+	Druck--Managers ausgegeben.
+\item {\tt Beenden:} Das Programm verlassen.
+\end{itemize}
+
+\subsection*{Das {\tt Ansicht}--Men"u}
+Der zweite Men"upunkt {\tt Ansicht} des Hauptfensters bietet einige 
+Wahlm"oglichkeiten bei der Darstellung der Daten. Dies sind
+\begin{itemize}
+\item {\tt Cluster-/ Werteausgabe:} Es erscheint ein Fenster mit der 
+	Ausgabe der berechneten Cluster, bei
+	Clusterausgabe nach Clustern, bei Werteausgabe nach laufenden
+	Nummern sortiert. Es werden die lfd (=laufende Nummer)
+	der Cluster und
+	die an der Berechnung beteiligten Werte anzeigt (siehe Abbildung
+	\ref{Abbildungwerteaus}).
+	Dies ist nat"urlich erst m"oglich, nachdem eine Berechnung
+	stattgefunden hat! 
+
+	\begin{figure}[htp]
+	\[ \epsfxsize=12cm \epsfbox{werteaus.ps} \]
+		\caption{\label{Abbildungwerteaus}
+			Werteausgabe nach laufenden Nummern, 
+			in der letzten Spalte stehen die Cluster. 
+			Der Button {\tt umschalten} dient dazu, in die 
+			andere Darstellung, in diesem Fall die
+			Ausgabe nach Clustern, zu wechseln.}
+	\end{figure}
+\item {\tt mit K.-Kreuz:} Einschalten eines Koordinatenkreuzes (n"utzlich
+	zur Orientierung bei 3D--Darstellungen).
+\end{itemize}
+
+\subsection*{Der Men"upunkt {\tt Rechnen }}
+Durch Auswahl von {\tt Berechnen} 
+erfolgt eine Berechnung der neuen Clusterung unter Ber"ucksichtigung 
+der unter Optionen und Werte eingestellten
+Parameter. Dies kann auch durch Bet"atigen der rechten Maustaste
+oder durch Dr"ucken der Taste \verb-F4- erreicht werden.
+Um eine Berechnung abzubrechen kann 
+die linke Maustaste gedr"uckt werden, und
+das Verfahren wird gestoppt.
+
+Mit der Auswahl von {\tt Enumeration} wird eine Routine zur Bestimmung des
+optimalen Funktionswertes mittels totaler Enumeration gestartet.
+Dies kann allerdings nur bei Problemen mit weniger als 30 Elementen
+geschehen, da die Ausf"uhrung sonst zu lange dauern w"urde.
+Diese Enumeration ist rekursiv implementiert und betrachtet von 
+$k^n$ m"oglichen Partitionen $k^{n-1}$--viele, was nach kurzen
+Symmetrie"uberlegungen eine obere Schranke ist. Mittels dynamischer 
+Programmierung kann diese Schranke noch ein wenig weiter gesenkt werden,
+allerdings k"onnen 
+damit auch nur unwesentlich gr"o"sere Probleme gel"ost werden (siehe
+hierzu Jensen [1969] und Duran \& Odell [1974]).
+
+
+\subsection*{Die Dialogbox {\tt Werte }}
+Unter {\tt Werte.. }
+erscheint ein Dialog, "uber den die anzuzeigenden bzw. zu berechnenden
+Werte eingestellt werden k"onnen (siehe Abbildung \ref{Abbildungwertewahl}).
+Die Anzahl der Werte f"ur \verb-Werte fuer Anzeige- ist 
+dabei auf 3 beschr"ankt (jeder
+ben"otigt eine Dimension), w"ahrend zur Berechnung beliebig viele
+Werte ausgew"ahlt werden k"onnen: Die weitere Auswahl
+unter \verb-weitere Werte- erfolgt durch Klicken  mit der Maus
+bei gleichzeitigem Dr"ucken der \verb-SHIFT--- bzw. \verb-Umschalt---Taste.
+
+\begin{figure}[htp]
+	\[ \epsfxsize=12cm \epsfbox{wertemen.ps} \]
+	\caption{\label{Abbildungwertewahl} Werte--Men"u}
+\end{figure}
+
+Mit dem \verb-OK---Button werden diese "ubernommen und das Men"u
+verlassen, mit dem Button 
+\verb-Abbruch- verl"a"st man das Men"u, ohne da"s die eingestellten
+Werte "ubernommen werden, und unter \verb-Hilfe- erscheint
+eine kleine Online--Erl"auterung.
+
+Mit der Checkbox \verb-Werte von oben uebernehmen- k"onnen die eingestellten
+Werte  f"ur die Anzeige
+direkt in das Berechnungsfeld "ubernommen werden.
+
+Der \verb-Einfaerbe---Button dient dazu, eine Einf"arbung nach den derzeitig
+angezeigten Werten vorzunehmen, d.h. die Clusteranzahl wird festgelegt durch 
+die Anzahl der in $y$--Richtung (vertikal) auftretenden Werte, 
+und alle Datens"atze mit dem gleichen Wert werden dem gleichen Cluster
+zugeordnet (siehe Abbildung \ref{special}).
+Dies ist allerdings nur dann m"oglich, wenn die so gew"ahlte Clusteranzahl
+die h"ochstm"ogliche von \MAXCLUSTER\ nicht "uberschreitet.
+
+
+\begin{figure}[htp]
+	\[ \epsfxsize=8cm \epsfbox{einfaerb.ps} \]
+	\caption{\label{special} Einf"arbe--Effekt}
+\end{figure}
+
+Der Zweck ist, sich diese Clusterung unter anderen Werten anzuschauen, um 
+dadurch eine eventuelle H"aufung als Pr"adikat eines Zusammenhangs ausfindig
+zu machen.
+
+Eine solche Clusterung l"a"st sich auch erzielen, indem man im
+Werte--Auswahl--Men"u unter \verb-Werte fuer Berechnung- nur einen Wert,
+n"amlich den, der gerade vertikal verl"auft, angibt. Als Zielfunktion
+(siehe \ref{zielfunktionenkapitel}) sollte dabei m"oglichst \verb-SS- (s.u.)
+gew"ahlt werden.
+
+
+\subsubsection*{Der {\tt Unterbereiche}--Dialog}
+Der Button \verb-Unterbereiche-  er"offnet ein Men"u, mit dem es m"oglich ist
+solche Datens"atze von der Berechnung auszuschlie"sen, die unter einem 
+bestimmten
+Merkmal einen bestimmten Wert aufweisen (siehe Abbildung \ref{unterber}).
+\begin{figure}[htp]
+	\[ \epsfxsize=8cm \epsfbox{unterber.ps} \]
+	\caption{\label{unterber} Unterbereichs--Men"u}
+\end{figure}
+
+Beispielsweise habe ein Merkmal die Auspr"agungen \verb-Ja- und 
+\verb-Nein-. Durch Markieren von \verb-Nein- bleiben alle
+die Datens"atze unber"ucksichtigt, die dieses \verb-Nein-
+aufweisen.
+In der Grafik werden weiterhin alle Punkte angezeigt, jedoch
+erscheinen diese "`passiven"' Punkte in wei"s.
+
+Dem Benutzer wird dadurch die M"oglichkeit gegeben, Abh"angigkeiten, 
+die nur in einer Untergruppe (z.B. Nichtrauchern) auftreten, 
+herauszufinden.
+
+\subsection*{Der {\tt Optionen}--Dialog}
+In dieser Dialogbox k"onnen die Berechnungsaspekte ver"andert werden.
+Hier die Erl"auterungen zu den einzelnen Punkten:
+\begin{figure}[htp]
+	\[ \epsfxsize=10cm \epsfbox{optionen.ps} \]
+	\caption{Optionen--Men"u}
+\end{figure}
+
+\begin{description}
+\item[{\tt Suchverfahren}]
+	Es kann einer der in Kapitel \ref{algorithmeneins} und Kapitel
+	\ref{combined} beschriebenen
+	Algorithmen (Local Search, Iterative Improvement, Simulated Annealing,
+	Simulated Annealing / Localopt, Threshold Acceptance, Combined
+	Algorithms, Tabu Search)
+	ausgew"ahlt werden. Nach Auswahl der Tabu Suche k"onnen  die
+	Tabu Listenl"ange und der Aspiration--Faktor festgelegt werden.
+	Bei dem
+	Verfahren Simulated Annealing / Localopt gestaltet sich manchmal der
+	Abbruch durch den Benutzer (linke Maustaste) etwas schwierig, so
+	da"s es "ofter versucht werden sollte.
+\item[{\tt Nachbarschaft}]
+	Es stehen die drei in Kapitel \ref{nachbarn} vorgestellten 
+	Nachbarschaften (Nearest--Cluster, Centroid, Random) zur Auswahl.
+	Bei der Nearest--Cluster Nachbarschaft kann dann die Anzahl $t$ der
+	zu betrachtenden n"achsten Nachbarpunkte eingestellt werden. 
+	Wird hier der Wert 0 gew"ahlt, so ist damit die gesamte 
+	Elementanzahl gemeint.
+
+	Wird die Checkbox {\tt Simultaneous} aktiviert, so stehen als 
+	Nachbarschaften nur noch Centroid und Nearest--Cluster zur Verf"ugung,
+	dar"uber hinaus wird die Auswahlm"oglichkeit des Suchverfahrens
+	auf Lokale Suche, Iterative Improvement und Simulated Annealing /
+	Localopt beschr"ankt.
+\item[{\tt Clusteranzahl}] Hier kann man die gew"unschte Anzahl der Cluster
+	eingeben. Voreinstellung ist 3; Maximalanzahl \MAXCLUSTER.
+\item[{\tt Wichtung der Zielfunktionen..}] Durch Anw"ahlen dieses Punktes (oder
+	durch Dr"u"cken der mittleren Maustaste, soweit vorhanden) erscheint
+	ein Men"u, in dem die Wichtung der Zielfunktionen gegeneinander
+	ge"andert werden kann (siehe Abbildung \ref{zielfunk}).
+	Die Bedeutung der einzelnen Zielfunktionen (vgl. 
+	\ref{zielfunktionenkapitel}):
+
+	\begin{center}
+	\begin{tabular}{c|c}
+	Zeichen & Bedeutung \\
+	\hline
+	\verb-S S-  &  $F1 = \sum\sum d_{ij}$\\
+	\verb-S S^2- &  $F2 = \sum\sum^2 d_{ij}$\\ 
+	\verb-S 1/n*S-  & $ F3 = \sum\frac1{|C|}\sum d_{ij}$\\ 
+	\verb-max S-  &  $F4 = \sum\max d_{ij}$\\ 
+	\verb-S max-  &  $F5 = \max\sum d_{ij}$\\ 
+	\verb-max max-  & $ F6 = \max\max d_{ij}$
+	\end{tabular}
+	\end{center}
+
+	Die Zielfunktionen k"onnen beliebig kombiniert und gegeneinander
+	gewichtet werden (dazu dienen die Zahlen --- eine 0 bedeutet, 
+	da"s diese Zielfunktion nicht beachtet wird); den vielf"altigen
+	M"oglichkeiten des Benutzers sind dabei kaum Grenzen gesetzt.
+
+	Die Voreinstellung ist $1 \cdot$ \verb-SS- und hat sich als recht brauchbar
+	erwiesen.
+
+	Wird die Einstellung nach einer Berechnung ver"andert, so wird der 
+	neue Zielfunktionswert dieser Partitionierung errechnet und sofort
+	angezeigt. Dies erm"oglicht einen guten Vergleich der Ergebnisse,
+	wenn unter verschiedenen Zielfunktionen gerechnet wird.
+
+	\begin{figure}[htp]
+	\[ \epsfxsize=10cm \epsfbox{zielfunk.ps} \]
+		\caption{\label{zielfunk} Zielfunktionen-Men"u}
+	\end{figure}
+
+\end{description}
+
+Abbildung \ref{nachbarn} zeigt \Clustering\ nach einer Berechnung.
+Dargestellt werden hierbei die angezeigten Werte in $x$-- und $y$--Richtung,
+der Zielfunktionswert der Partitionierung, die Anzahl der Iterationen, die
+der Algorithmus duchlaufen hat, und die Zeit, die zur Berechnung
+ben"otigt wurde. W"ahrend einer Berechnung kann man die Entwicklung der
+Zielfunktion durch die Anzeige st"andig verfolgen, wie auch
+die dazugeh"orige aktuelle Clusterung st"andig grafisch dargestellt wird.
+Bei den Verfahren SA, SA / Localopt, TA und TS kommt noch eine Anzeige
+hinzu, die den bislang besten Zielfunktionswert und seine 
+Auffindungsdauer angibt.
+
+\subsection*{Hilfe}
+Es erscheint eine kontextorientierte Windows--Hilfe im Stile des
+Windows--Help--Tools.
+
+Im Anhang A ist kurz beschrieben, wie man unter Hilfe des Setup--Programms
+\Clustering\ installiert. Der Anhang B enth"alt eine kurze "Ubersicht
+mit Erl"auterungen zu den Fehlermeldungen. Anhang C zeigt eine
+m"ogliche Vorgehensweise, um Strukturen in der medizinischen Datenbank
+zu erkennen.

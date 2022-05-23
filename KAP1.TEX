@@ -1,0 +1,893 @@
+\chapter{Klassifikationsprobleme}
+Am Anfang stellt sich die Frage, nach welchen Kriterien eine Menge
+klassifiziert werden soll, und wieviele solcher Klassifizierungen
+existieren.
+Dieses Kapitel enth"alt dementsprechend eine Einf"uhrung in die Beschreibung von
+Klassifikationsproblemen und deren Komplexit"at.
+Am Ende erfolgt dann eine kurze Darstellung der verschiedenen
+L"osungsstrategien.
+
+\section{Allgemeines}
+\begin{bezeichnung}
+Sei $E = \{x_1,\dots,x_n\}$ die nichtleere, endliche Menge der zu 
+gruppierenden $n$ Elemente und $\G$ eine {\em Gruppierung}
+von $E$ in $k\ (2 \leq k \leq n-1)$
+disjunkte Teilmengen oder {\em Cluster} $C_i$, deren Vereinigung
+$E$ ist, also
+\[ E =\bigcup_{i=1}^k C_i \qquad \mbox{und} \qquad 
+        C_i \cap C_j = \emptyset \quad
+        ( i,j = 1,\dots,k; \enspace i \neq j). \]
+Die Anzahl der Elemente in den Clustern werde mit $n_l$ bezeichnet, 
+es gilt also $n_l = |C_l|,\  n = \sum_{l=1}^k n_l$.
+Statt Gruppierung sprechen wir auch von einer {\em Zerlegung}
+oder {\em Partitionierung}.
+Eine solche Partitionierung in $k$ Cluster nennt man dann auch
+{\em $k$--Partitionierung} oder {\em $k$--Clustering}.
+\end{bezeichnung}
+
+\begin{definition}
+Sei $f$ eine Funktion, die jeder $k$--Partitionierung eine reelle Zahl
+$f(C_1,\dots,C_k)$ zuordnet. Ein {\em disjunktes Klassifikationsproblem} ist 
+dann gegeben durch: Finde $C_1^*,\dots,C_k^*$ mit
+\[ F(C_1^*,\dots,C_k^*) \ = \ \min\{F(C_1,\dots,C_k) \, | \, C_1,\dots,C_k
+	\mbox{ ist eine $k$--Partitionierung} \}.\]
+\end{definition}
+
+Wir gehen also davon aus, da"s alle Elemente einem Cluster zugeordnet sind.
+Man spricht dann von einer {\em exhaustiven} Gruppierung.
+
+\begin{figure}[htbp]
+\[\psfig{figure=b1-5}\]
+\caption{Disjunkte, exhaustive Clusterung}
+\end{figure}
+
+\begin{figure}[htbp]
+\[\psfig{figure=b1-6}\]
+\caption{Nicht disjunkte, nicht exhaustive Clusterung}
+\end{figure}
+
+Zwischen den Elementen sind sogenannte {\em Distanzen} gegeben, durch 
+die in der Regel die Funktion $f$ definiert wird. Die Distanz
+zwischen den Elementen $x$ und $y$ bezeichnen wir mit $d(x,y)$. 
+Ist keine Distanz zwischen $x$ und $y$ gegeben, so setzen wir
+entweder $d(x,y) = 0$ oder $d(x,y) = \infty$, je nachdem was
+angebracht ist.
+
+Klassifikationsprobleme lassen sich h"aufig auch gut durch 
+{\em ungerichtete Graphen} darstellen. Ein ungerichteter Graph $G=(V,E)$ 
+besteht aus einer Knotenmenge $V$ und einer Kantenmenge $E \subseteq
+P_2(V)$ = 2--elementige Teilmengen von $V$.
+
+\begin{figure}[htbp]
+\begin{center}
+\input b1-3.pic
+\end{center}
+\caption{ungerichteter, gewichteter Graph}
+\end{figure}
+
+Die Knoten entsprechen dabei den Elementen, die Gewichte der 
+Kanten symbolisieren die Distanzen zwischen ihnen.
+
+\begin{bezeichnung}
+F"ur eine genaue Betrachtung f"uhren wir folgende Bezeichnungen ein:
+\begin{quote}
+	Ein beliebiges Clustering--Problem mit $k$ Clustern und Zielfunktion $F$
+	bezeichnen wir mit $k|\cdot|F$; befinden sich die Elemente im 
+	$m$--di\-men\-sio\-na\-len euklidischen Raum, so schreiben wir
+	$k|m$--dim.--Euklid$|F$; oder der Einfachheit halber $k|m|F$.
+\end{quote}
+\end{bezeichnung}
+
+\section{Zielfunktionen}
+\label{zielfunktionen}
+\label{zielfunktionenkapitel}
+Problemabh"angig kann man sich mehrere solcher Funktionen "uberlegen,
+wir werden im Rahmen dieser Arbeit die folgenden sechs betrachten 
+(vgl. auch Brucker [1978]):
+
+\begin{eqnarray*}
+F_1(C_1,\dots,C_k) & = &  \sum\limits_{l=1}^k \sum\limits_{i,j \in C_l 
+	\atop i \neq j} d(x_i,x_j) \  \qquad =:  \ \sum \sum d_{ij} \\
+F_2(C_1,\dots,C_k) & = &  \sum\limits_{l=1}^k \sum\limits_{i,j \in C_l 
+	\atop i \neq j} (d(x_i,x_j))^2\   \quad =:\ \sum \sum d_{ij}^2 \\
+F_3(C_1,\dots,C_k) & = &  \sum\limits_{l=1}^k \frac{1}{|C_l|}\sum\limits_{i,j 
+	\in C_l \atop i \neq j} d(x_i,x_j)\ \quad  =:\ \sum \frac 1n \sum d_{ij} \\
+F_4(C_1,\dots,C_k) & = &  \max\limits_{l=1}^k \Big\{\sum\limits_{i,j \in C_l 
+	\atop i \neq j} d(x_i,x_j)\Big\} \ \quad =:  \ \max \sum d_{ij} \\
+F_5(C_1,\dots,C_k) & = &  \sum\limits_{l=1}^k \max\limits_{i,j \in C_l 
+	\atop i \neq j} \big\{d(x_i,x_j)\big\} \qquad \ =:  \ \sum \max d_{ij} \\
+F_6(C_1,\dots,C_k) & = & \max\limits_{l=1}^k \Big\{\max\limits_{i,j \in C_l 
+	\atop i \neq j} \big\{d(x_i,x_j)\big\}\Big\}  \ =: \  \max \max d_{ij} 
+\end{eqnarray*}
+
+Auf die Abstandsfunktion $d(x,y)$ wird im n"achsten Abschnitt
+\ref{distanzfunktion} noch n"aher eingegangen;
+an dieser Stelle sei nur erw"ahnt, da"s wir uns haupts"achlich im
+$m$--dimensionalen euklidischen Raum bewegen werden.
+Es gilt also $|| x - y || = (\sum_{i=1}^m |y_i - x_i |^2)^{\frac 12}$.
+
+Viele Autoren verwenden die von Bock [1974] {\em Varianzkriterium} 
+genannte Zielfunktion
+\begin{equation}
+	Z_1(C_1,\dots,C_k) \ =  \ \sum_{l=1}^k \sum_{i \in C_l}
+		|| x_i - \bar x_l ||^2,
+\end{equation}
+wobei 
+$\bar x_l := \frac 1 {n_l} \sum_{i \in C_l} x_i$.
+der {\em Gruppencentroid} oder {\em Gruppenschwerpunkt}
+des Clusters $C_l$ ist. 
+Beschr"anken wir uns mit unserer Abstandsfunktion $d(x,y)$ auf den
+euklidischen Fall, so k"onnen wir zeigen, da"s das Varianzkriterium
+"aquivalent zu der Zielfunktion $F_3$ ist:
+
+Sei dazu
+\[ \bar x \ = \ \frac 1 n \sum _{i=1}^n x_i \]
+der {\em Schwerpunktvektor}, f"ur den aufgrund seiner Definition
+\begin{equation}
+	\label{ximinusxquer}
+	\sum_{i=1}^n (x_i - \bar x) \ =  \ 0
+\end{equation}
+gilt.
+
+\begin{lemma}
+	Ist $y \in \R^m$ ein beliebiger reller Vektor, so gilt der
+	sogenannte {\em Verschiebungssatz}
+	\begin{equation}
+		\label{verschiebungssatz}
+		\sum_{i=1}^n || x_i - y||^2 \ = \ \sum_{i=1}^n ||x_i - \bar x||^2 +
+		n || \bar x - y ||^2 .
+	\end{equation}
+\end{lemma}
+{\bf Beweis:}
+\vspace*{-3mm}
+\begin{eqnarray*}
+	x_i - y & = & (x_i -\bar x) + (\bar x - y) \\
+	\Rightarrow \quad || x_i - y ||^2 & = & || x_i - \bar x ||^2 + 2(x_i -
+	\bar x)^T (\bar x - y) + || \bar x - y ||^2 \\
+	\Rightarrow \quad \sum_{i=1}^n || x_i - y ||^2 & = & \sum_{i=1}^n 
+	|| x_i - \bar x ||^2 + n ||\bar x - y ||^2 + 2  \sum_{i=1}^n
+	(\bar x - y)^T(x_i - \bar x).
+\end{eqnarray*}
+Der letzte Term auf der rechten Seite verschwindet wegen (\ref{ximinusxquer}), 
+und damit ist der Verschiebungssatz gezeigt.$\quad\Box$
+
+Setzt man in (\ref{verschiebungssatz}) $y = x_j$ und summiert "uber
+$j = 1,\dots,n$, so erh"alt man
+\begin{eqnarray*}
+	\sum_{j=1}^n \sum_{i=1}^n ||x_i - x_j ||^2 & = &
+		\sum_{j=1}^n \left( \sum_{i=1}^n ||x_i - \bar x ||^2 
+		+ n ||\bar x - x_j||^2\right) \\
+	& = & n\sum_{i=1}^n || x_i - \bar x ||^2 + n \sum_{j=1}^n ||\bar x
+		- x_j ||^2\\
+	\Leftrightarrow \quad \sum_{i=1}^n || x_i - \bar x ||^2 & = &
+		\frac 1 n \sum_{j=1}^n \sum_{i=1}^n || x_i - x_j||^2 - 
+		\sum_{j=1}^n ||\bar x - x_j ||^2 
+\end{eqnarray*}
+und schlie"slich
+\[ \sum_{i=1}^n ||x_i - \bar x||^2 \ = \ \frac 1{2n} \sum_{i=1}^n \sum_{j=1}^n
+	||x_i - x_j ||^2. \]
+Schreibt man dies f"ur einen durch $C_l$ charakterisierten Cluster, 
+so bekommt man
+\[ \sum_{i \in C_l} || x_i - \bar x_l ||^2 \ = \ 
+	\frac 1{2n_l} \sum_{i,j \in C_l} || x_i - x_j ||^2.\]
+Hieran erkennt man, da"s die Summe der quadratischen Abweichungen der
+Clustermitglieder von ihrem Schwerpunkt allein durch die Abst"ande
+der Clustermitglieder untereinander beschrieben werden kann.
+Bis auf den konstanten Faktor $\frac 1 2$ und das Quadrat an den 
+Distanzen stimmen die Funktionen $Z_1$ und $F_3$ also "uberein. 
+W"ahlt man $d(x_i,x_j) = \frac 12 || x_i - x_j ||^2$, so
+hat man eine vollst"andige "Ubereinstimmung.
+
+{\bf Beispiel} (siehe Abbildung \ref{varianzbild}):
+Gegeben seien ein Cluster $C_1$ mit den Punkten $P_1(1;1), P_2(3;2),
+$ und $P_3(2;3)$, sowie ein Cluster $C_2$ mit dem Punkt $P_4(5;5)$.
+Dann betr"agt
+\begin{eqnarray*}
+\bar x_1 & = & \left(\frac 13 (1+3+2); \frac 13 (1+2+3) \right) \ = \
+	(2,2),\\
+\bar x_2 & = & (5,5),\\
+Z_1(C_1) & = & 1^2 + 1^2 + 1^2+0^2+0^2+1^2 \ = \ 4,\\
+Z_1(C_2) & = & 0,\\
+Z_1(C_1,C_2) & = & 4.
+\end{eqnarray*}
+
+\begin{figure}[htbp]
+\[\input b1-7.pstex_t\]
+\caption{Darstellung zum Varianzkriterium \label{varianzbild}}
+\end{figure}
+
+Mit diesen Zielfunktionen werden nun bestimmte Erwartungen verkn"upft:
+Zum einen sollen die Cluster nicht "`entarten"', das hei"st sie
+sollen zusammenh"angend und m"oglichst konvex\footnote{Eine Menge
+$M \subset \R^n$ hei"st {\em konvex}, wenn sie mit jedem Punktepaar 
+$x,y \in M$ die ganze Verbindungsstrecke zwischen $x$ und $y$ enh"alt.
+Die {\em konvexe H"ulle} $\bar N$ einer Menge $N \subset \R^n$  ist 
+die kleinste konvexe Menge, die $N$ enth"alt.}
+ sein (geometrisch 
+betrachtet), und sie sollen die tats"achliche Struktur der Objekte
+gut widerspiegeln. 
+Konvexit"at deshalb, da es sonst nicht angebracht scheint, 
+"uberhaupt eine Clusterung vorzunehmen.
+
+Von $\sum\sum$ und $\sum\sum^2$ erwarten wir, da"s die Anzahlen der Elemente 
+in den
+Clustern bei einer gleichm"a"sig verteilten Menge etwa gleich sind.
+Da n"amlich jeder Cluster eine Clique bildet (Clique = vollst"andig
+vernetzter Graph), und die Kantenanzahl in einer Clique quadratisch
+mit der Knotenzahl w"achst, existieren somit insgesamt mehr Kanten, wenn
+ein Cluster "uberproportional viele Elemente enth"alt, als wenn die
+Elementanzahlen in den Clustern etwa gleich sind. Dadurch w"urden
+also mehr Kantengewichte aufsummiert.
+
+\begin{figure}[htbp]
+\begin{center}
+\input b1-4.pic
+\end{center}
+\caption{M"ogliche 2--Partitionierungen eines Problems}
+\end{figure}
+
+Bei $\sum\sum^2$ machen sich gro"se $d_{ij}$--Werte st"arker bemerkbar als bei
+$\sum\sum$, das hei"st die Cluster werden eher "`Kugelgestalt"' annehmen.
+
+Das Streben nach gleichen Elementanzahlen in den Clustern ist bei 
+$\sum\frac 1n \sum$ nicht gegeben, da hier diese Anzahl mit einflie"st, 
+und sowohl gro"se als auch kleine Cluster entsprechend ihrer
+Gr"o"se gewichtet werden.
+
+Im Gegensatz hierzu ist $\max\sum$ wieder bem"uht die Summen in den Clustern
+einem Wert $S$ anzugleichen; im optimalen Fall gilt 
+$\sum_{i,j \in C_l \atop i\neq j } d_{ij} = S \ \forall\, l = 1,\dots,k$.
+Das hei"st geometrisch gesehen, da"s Cluster, die r"aumlich sehr gro"s
+sind, nur wenige Elemente; r"aumlich kleine dagegen viele Elemente
+enthalten werden.
+
+Bei $\sum\max$ spielen spielen die Anzahlen der Elemente in den jeweiligen
+Clustern keine so gro"se Rolle mehr, wie auch bei $\max\max$. 
+Anders als bei den ersten 4 Zielfunktionen k"onne wir also keine
+Aussage dar"uber treffen, wieviele Elemente in den einzelnen Clustern
+sein werden.
+Jedoch lassen sich die Maximierungen dahingehend interpretieren, 
+da"s wir bei $\max\max$ r"aumlich  gleich gro"se Cluster erwarten k"onnen.
+
+Welche Zielfunktion jetzt f"ur eine Datenmenge und Clusteranzahl die
+geeignetste ist, wird sich zeigen m"ussen. 
+Vorab l"a"st sich h"ochstens sagen, da"s Zielfunktionen, 
+die Cluster mit gleichen Elementanzahlen hervorbringen, 
+nicht geeignet sein werden solche Partitionierungen vorzunehmen, 
+bei denen sehr unterschiedlich gro"se Cluster eine gute 
+L"osung darstellen.
+
+\section{Distanzfunktion}
+\label{distanzfunktion}
+\begin{definition}
+Eine Abbildung $d:E\times E \to [0;\infty)$ hei"st eine 
+{\em Abstandsfunktion}, wenn gilt
+\begin{eqnarray*}
+	d(x,y)  =  d(y,x)  \geq  0 & \qquad & \mbox{(Symmetrie)}\\
+	d(x,y) = 0 \ \Rightarrow  \ x = y &       & \mbox{(Eindeutigkeit)}\\
+	d(x,z) + d(z,y)  \geq  d(x,y) &       & \mbox{(Dreiecksungleichung)}
+\end{eqnarray*}
+\end{definition}
+In praktischen Anwendungen wird die Eindeutigkeit oft vernachl"assigt.
+
+Die {\em Minkowski}--Metriken sind bekannte Beispiele f"ur 
+Distanzfunktionen, f"ur die f"ur $p \geq 1$ und 2 Punkte $x_i,x_j$ gilt
+\[ L_p (x_i,x_j) \ = \ \left(\sum_{k=1}^m |x_{jk} - x_{ik} |^p
+	\right) ^{\frac 1 p}. \]
+Diese Familie enth"alt die $L_1$-- oder {\em Manhatten}--Metrik, die
+$L_2$ oder euklidische Metrik, und in ihrem Grenz"ubergang
+$p \to \infty$ $L_\infty$ oder die Tschebyscheff--Metrik, f"ur die gilt
+\[ L_\infty(x_i,x_j) \ = \ \max \{ | x_{ik} - x_{jk} | : 1 \leq k \leq m \}.\]
+
+Die geometrische Anschauung legt nahe, den Abstand zweier Elemente
+$e_i, e_j$ durch den euklidischen Abstand der sie repr"asentierenden
+Punkte $x_i, x_j$ zu messen:
+\[ d(x_i, x_j) \ := \ || x_j - x_i || \ = \ 
+	\sqrt{ \sum_{k=1}^m (x_{jk} - x_{ik})^2} \]
+
+Die Eigenschaft dieser Distanzfunktion l"a"st sich so beschreiben:
+Die Distanzen $d(x_i, x_j)$ sind translationsinvariant sowie
+invariant bez"uglich orthogonaler linearer Transformationen 
+(Drehungen, Spiegelungen) der Vektoren $x_1,\dots,x_n$; sie 
+"andern sich also nicht bei Abbildungen der Art
+\[ x_i \to A x_i + b \quad i = 1,\dots,n, \]
+wobei $b \in \R^m$ ein beliebiger, fester Vektor und $A$ eine
+orthogonale $m \times m$--Matrix ist.
+Die euklidische Distanz ist allerdings nicht skaleninvariant;
+daf"ur m"u"sten die Daten normiert sein.
+
+Einige Autoren verwenden auch die {\em Mahalanobis}--Distanz
+\begin{eqnarray*}
+	d^2 (x_i,x_j) & = & (x_i -x_j) \Sigma^{-1} (x_i - x_j)^T \\
+				  & = & \sum_{k=1}^m \sum_{l=1}^m (x_{ik} - x_{jk})
+					\sigma_{kl} (x_{il} - x_{jl}).
+\end{eqnarray*}
+Dabei ist $\Sigma^{-1} = (\sigma^\ast_{kl})$ die Inverse der empirischen
+$m\times m$--Kovarianzmatrix $\Sigma = (\sigma_{kl})$ von
+$x_1,\dots,x_n$ mit den Elementen
+\[ \sigma_{kl} \ := \ \frac 1{n-1} \sum _{i=1}^n (x_{ik} - \bar x _{.k})
+	(x_{il} - \bar x _{.l})\qquad k,l = 1,\dots,m. \]
+Hierbei gilt
+\[ \bar x_{.i} \ := \ \frac 1 n \sum_{k=1}^n x_{ki}. \]
+
+Die Eigenschaften der Mahalanobis--Distanz k"onnen folgenderma"sen 
+charakterisiert werden:
+\begin{enumerate}
+\item $d_{ij}$ h"angt von allen $n$ Vektoren $x_1,\dots,x_n$ ab. Es gilt
+\[ 0 \leq d_{ij}^2 \leq 2n \quad \mbox{ und } \quad 
+	\sum_{i=1}^n\sum_{j=1}^n d_{ij}^2 = 2n^2m.\]
+\item $d_{ij}$ ist invariant bez"uglich aller Parallelverschiebungen
+und aller linearen, nicht singul"aren Transformationen der $x_1,\dots,x_n$:
+\[ x_i \to \tilde x_i := A x_i + b \quad i =1,\dots,n,\]
+wobei $b \in \R^m$ ein beliebiger, fester Vektor und $A$ eine reelle
+$m\times m$--Matrix mit $\det(A) \neq 0$ ist. Bei dieser
+Transformation geht n"amlich
+\begin{eqnarray*}
+	\tilde x \mbox{ in } \tilde{\tilde x} & := & A \tilde x + b \ \mbox{ und}\\
+	\Sigma   \mbox{ in } \tilde\Sigma     & := & A \Sigma A^T \quad \mbox{mit }
+		\tilde\Sigma^{-1} = {C^T}^{-1} \cdot \Sigma^{-1} \cdot C^{-1}
+\end{eqnarray*}
+"uber, so da"s sich f"ur die Distanz $\tilde d_{ij}^2$ der transformierten
+Gr"o"sen gerade
+\begin{eqnarray*}
+	\tilde d_{ij}^2 & := & (\tilde x_i -\tilde x_j)^T\tilde\Sigma^{-1}
+		(\tilde x_i - \tilde x_j) \\
+	& = & (x_i -x_j)^TC^T{C^T}^{-1}\cdot\Sigma^{-1}\cdot C^{-1}C(x_i-x_j) \\
+	& = & (x_i -x_j)^T \Sigma^{-1}(x_i-x_j)\\
+	& = & d^2_{ij}
+\end{eqnarray*}
+ergibt.
+\end{enumerate}
+Die Mahalanobis--Distanz besitzt somit weitergehende Invarianzeigenschaften
+als die euklidische Distanz, bei der die Matrix $C$ orthogonal sein mu"s;
+insbesondere ist hier die Skaleninvarianz gesichert.
+
+Weitere Eigenschaften dieser Distanzfunktion findet man bei Mahanalobis
+[1936]. 
+Der Vorteil der Skaleninvarianz der Mahalanobis--Distanz geht bei uns
+dadurch verloren, da"s wir die zugrundeliegenden Daten sowieso normieren
+m"ussen, um eine Visualisierung des Rechenprozesses zu erm"oglichen.
+Wir werden also die euklidische Metrik als Distanzfunktion verwenden.
+
+\section{Komplexit\"at}
+\begin{satz}
+Die Anzahl $S(n, k)$ der bei $k$ Clustern m"oglichen disjunkten Zerlegungen
+$\G$ von $E$ l"a"st sich "uber die Formel
+\begin{equation}
+        \label{stirling}
+        S(n, k) \; = \; \frac{1}{k!} \sum_{i=0}^k (-1)^i {k \choose i} (k-i)^n 
+\end{equation}
+berechnen, bzw. im Anwendungsfall einfacher rekursiv "uber
+\begin{equation}
+        \label{stirlingrekursiv}
+        S(n+1, k) \; = \; S(n, k-1) + k \cdot S(n, k) \quad\mbox{ mit }
+        \begin{array}{l}
+                 %S(n, 1)  =  S(n, n) = 1, \\
+                 %S(n, k)  =  0 \ \mbox{f"ur } n < k.
+				 S(0,0) = 1,\\
+				 S(n,0) = 0 \mbox{ f"ur } n > 0,\\
+				 S(n,1) = 1 \mbox{ f"ur } n > 0,\\
+				 S(n,k) = 0 \mbox{ f"ur } n < k.
+         \end{array}
+\end{equation}
+\end{satz}
+{\bf Beweis} der Rekursionsformel:
+Man kann die Zerlegungen von $\{x_0,x_1,\dots,x_n\}$ aufteilen in die
+Partitionen, die den Cluster $\{x_0\}$ enthalten 
+(die Menge $\{x_1,\dots,x_n\}$ mu"s dann noch in $k-1$ Cluster
+aufgeteilt werden), und in die Partitionen, bei denen das Element $x_0$
+zu einem der $k$ Cluster einer Zerlegung von $\{x_1,\dots,x_n\}$ 
+geschlagen wird.
+
+Der Beweis von (\ref{stirling}) erfolgt durch Induktion:
+Nat"urlich kann (\ref{stirling}) geschrieben werden als
+\begin{equation}
+	\label{stirling2}
+	S(n,k) \; = \; \frac{1}{k!} \sum_{i=0}^k (-1)^{k-i} {k \choose i} i^n .
+\end{equation}
+F"ur $n=0$ lautet die rechte Seite dann
+\[
+	\frac{1}{k!} \sum_{i=0}^k (-1)^{k-i} {k \choose i} \; = \;
+	\frac{1}{k!} \sum_{i=0}^k { k \choose i} 1^i (-1)^{k-i} \; = \;
+	\frac{(1-1)^k}{k!},
+\]
+was f"ur $k=0$ den Wert $1$ und sonst den Wert $0$ ergibt. F"ur $n>0=k$ ist
+die rechte Seite von (\ref{stirling2}) gleich $0 = S(n,k)$. 
+Angenommen (\ref{stirling2}) gilt f"ur $n$ und alle $k=0,1,\dots$;
+dann liefert (\ref{stirlingrekursiv}) f"ur $k \geq 1$
+\begin{eqnarray*}
+	S(n+1,k) & = & k S(n,k) + S(n,k-1) \\
+		 & = & \frac {k}{k!} \sum_{i=0}^k (-1)^{k-i} { k \choose i} i^n
+		     + \frac {1}{(k-1)!} \sum_{i=0}^{k-1} (-1)^{k-1-i}
+		       {k-1 \choose i} i^n \\
+		 & = & \frac {1}{(k-1)!} \sum_{i=0}^k (-1)^{k-i} \,i^n
+		       \left[{k \choose i} - { k-1 \choose i} \right] \\
+		 & = & \frac {1}{(k-1)!} \sum_{i=0}^k (-1)^{k-i} \,i^n
+		       {k-1 \choose i-1}  \\
+		 & = & \frac {1}{k!} \sum_{i=0}^k (-1)^{k-i} \,i^{n+1}
+		       \,\frac ki {k-1 \choose i-1}  \\
+		 & = & \frac {1}{k!} \sum_{i=0}^k (-1)^{k-i} 
+		       {k \choose i} i^{n+1}. \quad\quad\Box 
+\end{eqnarray*}
+\vspace*{0.5cm}
+
+Die $S(n, k)$ werden auch {\em Stirling'sche Zahlen zweiter Art} genannt
+und besitzen etwa f"ur $n = \{1,2,\dots,10,15,20,25,50,100\}$ und 
+$k = \{1,2,3,4,5,10\}$ die Werte aus Tabelle \ref{tabsterling}.
+
+\begin{table}
+\caption{Stirling'sche Zahlen zweiter Art \label{tabsterling}}
+\begin{center}
+\begin{tabular}{|r||rrrrrrr|}\hline
+	%\multicolumn{9}{|c|}{\rule[-3mm]{0mm}{8mm} 
+		%Stirling'sche Zahlen zweiter Art }\\
+	%\hline
+	$\displaystyle \bslashfrac{k}{n}$ & 0 & 1 & 2 & 3 & 4 & 5 & 10 \\
+	\hline\hline
+	0    & 1 & 0 & 0 & 0 & 0 & 0 & 0  \\
+	1    & 0 & 1 & 0 & 0 & 0 & 0 & 0  \\
+	2    & 0 & 1 & 1 & 0 & 0 & 0 & 0  \\
+	3    & 0 & 1 & 3 & 1 & 0 & 0 & 0  \\
+	4    & 0 & 1 & 7 & 6 & 1 & 0 & 0  \\
+	5    & 0 & 1 & 15 & 25 & 10 & 1  & 0  \\
+	6    & 0 & 1 & 31 & 90 & 65 & 15 & 0  \\
+	7    & 0 & 1 & 63 & 301 & 350 & 140 & 0  \\
+	8    & 0 & 1 & 127 & 966 & 1701 & 1050 & 0  \\
+	9    & 0 & 1 & 255 & 3025 & 7770 & 6951 & 0  \\
+	10   & 0 & 1 & 511 & 9330 & 34105 & 42525 & 1  \\
+	15   & 0 & 1 & 16383 & 2.3$\cdot 10^{6}$ & 4.2$\cdot 10^{7}$ & 2.1$\cdot 10^{12}$ & 1.2$\cdot 10^{7}$  \\
+	20   & 0 & 1 &  524287 & 5.8$\cdot 10^{8}$ & 4.5$\cdot 10^{10}$ & 7.5$\cdot 10^{11}$ & 5.9$\cdot 10^{12}$  \\
+	25   & 0 & 1 & 1.7$\cdot 10^{7}$ & 1.4$\cdot 10^{11}$ & 4.7$\cdot 10^{13}$ & 2.4$\cdot 10^{15}$ & 1.2$\cdot 10^{18}$  \\
+	50   & 0 & 1 & 5.6$\cdot 10^{14}$ & 1.2$\cdot 10^{25}$ & 5.3$\cdot 10^{28}$ & 7.4$\cdot 10^{32}$ & 2.6$\cdot 10^{43}$  \\
+	100  & 0 & 1 & 6.3$\cdot 10^{31}$ & 8.6$\cdot 10^{46}$ & 6.7$\cdot 10^{58}$ & 6.6$\cdot 10^{67}$ & 2.8$\cdot 10^{93}$  \\
+	\hline
+\end{tabular}\\
+\end{center}
+\end{table}
+
+Ebenso einfach einzusehen ist das 
+\begin{lemma}
+Es gilt
+\begin{equation}
+	\label{stirlingrek}
+	S(n+1,k) \; = \; \sum_{i=0}^n {n \choose i} S(i,k-1) \quad
+		(n=0,1,\dots;\ k=1,2,\dots).
+\end{equation}
+\end{lemma}
+{\bf Beweis:}
+Dies beruht auf folgender Zerlegung von $\{x_0,x_1,\dots,x_n\}$: 
+1) Festlegung
+des $x_0$ enthaltenden Cluster mit $n+1-i$ Elementen durch Fixierung einer
+Teilmenge von $\{x_1,\dots,x_n\}$ mit $n-i$ Elementen
+$\Big( {n \choose n-i} = {n \choose i }$ M"oglichkeiten $\Big)$;
+2) Zerlegung der Restmenge von $i$ Elementen in $k-1$ Cluster.$\quad\Box$
+\vspace*{0.5cm}
+
+
+Wird die Anzahl $k$ der Cluster nicht vorherbestimmt, so kann man die 
+Anzahl $B_n$ aller m"oglichen Partitionen rekursiv ermitteln, indem
+man die Formel
+\[ B_n = \sum_{i=1}^n S(n, i)\]
+verwendet. Es gilt nun der 
+
+\begin{satz}
+F"ur die Anzahl $B_{n}$ aller m"oglichen Partitionierungen von $n$ 
+Elementen gilt
+\[ B_{n+1} = \sum_{j=0}^n {n \choose j} B_j \quad \mbox{mit } 
+	B_0 = 1,\enspace B_1 = 1. \]
+\end{satz}
+{\bf Beweis: }
+\begin{eqnarray*}
+	B_{n+1} & = & \sum_{i=1}^{n+1} S(n+1,i) \\
+		& {(\ref{stirlingrek}) \atop =} & \sum_{i=1}^{n+1}
+			\sum_{j=0}^n {n \choose j} S(j,i-1) \\
+		& = & \sum_{j=0}^n {n \choose j} \sum_{i=1}^{n+1} S(j,i-1) \\
+		& = & \sum_{j=0}^n {n \choose j} \sum_{i=0}^n S(j,i). \\
+%		& = & \sum_{j=0}^n {n \choose j} B_j,
+\end{eqnarray*}
+F"ur $n=0$ ist der Wert der zweiten Summe 1,
+% und f"ur $n > 0$ gerade
+%$B_j$, da $B_j = \sum_{i=1}^j S(j,i) = \sum_{i=1}^n S(n,i)$ f"ur $n>j$.
+somit gilt $B_1 = { 0 \choose 0} \cdot 1 = 1$. 
+F"ur $n > 0$ gilt $\sum_{i=0}^n S(j,i) = \sum_{i=1}^n S(j,i) = B_j$,
+da $n > j$.
+$\quad\Box$
+\vspace*{0.5cm}
+
+%da $B_n = \sum_{i=0}^n S(n,i) = \sum_{i=0}^\infty S(n,i)$.
+Diese Zahlen werden {\em Bell'sche Zahlen} oder {\em Exponentialzahlen}
+genannt.
+
+\begin{table}[htbp]
+\caption{Bell'sche Zahlen}
+\begin{center}
+\begin{tabular}{|r|r||r|r|}\hline
+	%\multicolumn{4}{|c|}{\rule[-3mm]{0mm}{8mm} Bell'sche Zahlen }\\
+	%\hline
+	n & $B(n)\enspace$ & n &  $B(n)\enspace$  \\
+	\hline
+	1 & 1 & 15 & 1.4$\cdot 10^{7}$ \\
+	2 & 2 & 20 & 5.2$\cdot 10^{13}$ \\
+	3 & 5 & 25 & 4.6$\cdot 10^{17}$ \\
+	4 & 15 & 30 & 8.5$\cdot 10^{23}$ \\
+	5 & 52 & 35 & 2.8$\cdot 10^{29}$ \\
+	6 & 203 & 40 & 1.6$\cdot 10^{35}$ \\
+	7 & 877 & 45 & 1.4$\cdot 10^{41}$ \\
+	8 & 4140 & 50 & 1.8$\cdot 10^{47}$ \\
+	9 & 21147 & 60 & 9.8$\cdot 10^{59}$ \\
+	10 & 115975 & 70 & 1.8$\cdot 10^{73}$ \\
+	\hline
+\end{tabular}\\
+\end{center}
+\end{table}
+
+\section{\NP--Vollst"andigkeit}
+\label{npvollstaendigkeit}
+Anhand obiger Formeln f"ur die $S(n,k)$ l"a"st sich erahnen, da"s es sich
+bei Klassifikation im allgemeinen um ein \NP--schwieriges Problem handelt;
+nur einige Spezialf"alle sind polynomial l"osbar.
+
+Bisher haben wir die Probleme formuliert als:
+\begin{quote}
+	"`Bestimme eine Partitionierung derart, da"s der Zielfunktionswert
+	  minimal wird."'
+\end{quote}
+In der theoretischen Untersuchung spielen Entscheidungsprobleme eine
+wichtige Rolle. Ein Entscheidungsproblem besteht aus einer
+Fragestellung, die entweder mit "`ja"' oder "`nein"' beantwortet werden
+kann. Wenn wir obige Problemstellung als Entscheidungsproblem
+formulieren erhalten wir:
+\begin{quote}
+	"`Gegeben eine Zahl $k \in \N$. Gibt es eine Partitionierung
+	  mit Zielfunktionswert $\leq k$ ?"'
+\end{quote}
+Ein Klassifikationsproblem $P$ ist \NP--schwierig, falls das zugeh"orige
+Entscheidungsproblem $P(k)$ \NP--vollst"andig ist.
+F"ur eine genauere Einf"uhrung in die Theorie der \NP--Vollst"andigkeit 
+siehe man 
+das Standardwerk von Garey \& Johnson [1979]; hier sei nur erw"ahnt, da"s ein
+Problem $P'$ {\em reduzierbar} auf eine Problem $P$ ist ($P' \alphared P$), 
+wenn eine polynomial berechenbare Funktion $g$ existiert, die jeden Input
+von $P'$ in einen Input von $P$ so "uberf"uhrt, da"s gilt:
+\begin{quote}
+	$x$ ist "`Ja"'--Input von $P'$ $\iff$ $g(x)$ ist "`Ja"'--Input von $P$.
+\end{quote}
+
+Um zu zeigen, da"s ein Entscheidungsproblem $P$ \NP--vollst"andig ist, 
+mu"s gezeigt werden, da"s
+\begin{enumerate}
+\item $P$ in der Klasse \NP\ liegt, das hei"st 
+	$P$ in polynomialer Zeit durch eine nichtdeterministische Turing
+	Maschine gel"ost werden kann.
+	%es existiert ein Zertifikat $y$
+	%derart, da"s zu jedem "`Ja"'--Input $x$ ein polynomialer Algorithmus
+	%existiert, der best"atigt, da"s $y$ ein g"ultiges Zertifikat ist, 
+	%wobei $|y|$ durch ein Polynom in $|x|$ beschr"ankt ist.
+\item Es existiert ein \NP--vollst"andiges Problem $P'$ mit $P' 
+	\alphared P$.
+\end{enumerate}
+
+Die Klassifikationsprobleme, die wir hier betrachten, liegen alle in der
+Klasse \NP, denn sie k"onnen durch Backtracking auf
+einer nichtdeterministischen Turing Maschine in  polynomialer Zeit
+gel"ost werden.
+
+\begin{satz}
+	F"ur alle $k \geq 2, \ \beta =$"`$\cdot$"' oder 
+	$\beta=$"`$m$--dim.--Euklid$"'$ ($m$ beliebig) und Zielfunktion $f$ gilt
+		\[  k | \beta |f \ \alphared\  k+1|\beta|f. \]
+\end{satz}
+{\bf Beweis:}
+Angenommen, der Graph $G=(V,E)$ entspreche dem Problem $k|\cdot|f$ mit
+$n$ Knoten, und $S$ sei eine obere Schranke f"ur $f$. Dann konstruieren
+wir das Problem $k+1 | \cdot | f$ mit $V^* = V \cup \{v^*\}$, wobei
+$v^* \not\in V,\  E^* = E \cup \{\{i,v^*\} \, | \, i \in V\}$ und 
+$d_{iv^*} > nS$. Die anderen $d_{ij}$--Werte bleiben erhalten.
+Eine optimale L"osung des erweiterten Problems mu"s einen 1--elementigen
+Cluster $\{v^*\}$ enthalten, und die "ubrigen Cluster stellen eine
+optimale L"osung des Originalproblems dar.$\quad\Box$
+\vspace*{0.5cm}
+
+\subsection{\NP--vollst"andige Probleme}
+Das {\em Partitionsproblem} (PART) wurde von Garey \& Johnson [1979] als
+\NP--vollst"andig klassifiziert und ist wie folgt definiert: Gegeben ist eine
+Menge von positiven ganzen Zahlen $x_1,\dots,x_n$. Gesucht ist eine
+Teilmenge $J \subset \{1,\dots,n\}$ mit der Eigenschaft
+\[ \sum_{i \in J} x_i \ = \ b \ := \ \frac12 \sum_{i=1}^n x_i.\]
+
+%Wir betrachten nun das Problem $2|\cdot|\max\sum d_{ij}$. Dies liegt in
+%\NP, denn:
+%Gibt es eine L"osung mit Zielfunktionswert $Z \leq b \ (b \in \N)$?
+%F"ur jeden "`Ja"'--Input $x$ mit $|x|$ = $O(n)$ existiert ein Zertifikat
+%$y = \{\sum_{i,j \in C_1 \atop i \neq j} d_{ij},
+	%\sum_{i,j \in C_2 \atop i \neq j} d_{ij} \}$
+%mit $|y|$ = $O(n)$ und in Zeit $O(n)$ kann dies "uberpr"uft werden.
+
+\begin{satz}
+\label{satz19}
+	\begin{quote}
+		PART\ $\alphared \ 2 |\cdot|\max\sum d_{ij}$.
+	\end{quote}
+\end{satz}
+{\bf Beweis:}
+Das Partitionsproblem sei gegeben durch die Werte $x_1,\dots,x_n$ 
+und $b=\frac12 \sum_{i=1}^n x_i$. Angenommen, das Partitionsproblem habe
+als L"osung die Menge $I$. Dann gilt f"ur das Klassifikationsproblem mit
+der Knotenmenge
+\[ V = \{1,\dots,n\} \cup \{ i' \, | \, i = 1,\dots,n \} \cup
+	\{ i^* \, | \, i = 1,\dots,n\}, \]
+der Kantenmenge
+\[ 	E = \{ \{i,i'\} \, | \, i = 1,\dots,n\} \cup \{\{i,i^*\}\,|\,i=1,\dots,n\}
+	\cup \{\{i',i^*\} \, | \, i = 1,\dots,n\} \]
+und den Distanzen
+\[ d_{ii^*} = d_{i'i^*} = 2b, \quad d_{ii'} = x_i \quad\forall\, 
+	i=1,\dots,n\,,\]
+da"s der Zielfunktionswert nicht gr"o"ser als $b$ ist.
+Denn die Partition definiert durch
+$C_1 = \{ i \, | \, i \in I\} \cup \{i' \, | \, i \in I \}
+\cup \{i^* \, | \, i \not\in I\}$ hat den Zielfunktionswert $b$.
+Betrachte dazu Abbildung \ref{beweis19} 
+(es sei O.B.d.A $I = \{1,\dots,l\},\ l<n$).
+
+%%%%%%%%%%%%%%%\input b1-1.pic
+\begin{figure}[htbp]
+%\[\input b1-1neu.pstex_t \]
+\caption{\label{beweis19}Zum Beweis des Satzes}
+\end{figure}
+
+Hat andererseits das Klassifikationsproblem die  L"osung $C_1,C_2$ mit
+$C_1 \cup C_2 = \{1,\dots,n\}$ und Zielfunktionswert $\leq b$, dann mu"s
+$i^*$ in einem anderen Cluster als $i$ und $i'$ liegen. 
+Somit gilt $i \in C_1$ genau dann, wenn $i' \in C_1$. Also gibt es
+eine Menge $I \subseteq \{1,\dots,n\}$ mit
+\[ \sum_{ i,j \in C_1 \atop i \neq j} d_{ij} = \sum_{i \in I} x_i \leq b
+	\ \mbox{ und } \ 
+	\sum_{i,j \in C_2 \atop i \neq j} d_{ij}=\sum_{i\not\in I} x_i\leq b.\]
+Folglich ist $I$ eine L"osung f"ur PART.
+Da die "Uberf"uhrung der Daten in Zeit $O(n)$ m"oglich ist, ist die 
+Aussage damit bewiesen.
+$\quad\Box$
+\vspace*{0.5cm}
+
+Das {\em 3--F"arbungsproblem} ist gegeben durch einen ungerichteten Graphen. 
+Frage: K"onnen die Knoten so mit drei Farben eingef"arbt werden, da"s
+jeweils zwei durch eine Kante verbundene Knoten unterschiedliche
+F"arbungen besitzen? Die \NP--Vollst"andigkeit dieses Problems wurde
+bei Stockmeyer [1973] gezeigt.
+
+%Wir betrachten jetzt das Klassifikationsproblem $3 | \cdot |f$. Dies liegt
+%nat"urlich auch wieder in \NP, da zu der Frage, ob es einen
+%Zielfunktionswert $Z \leq b, \ b \in \N$ gibt, wieder ein Zertifikat $y$
+%f"ur jeden "`Ja"'--Input $x$ mit $|x|$ = $O(n)$ existiert, derart da"s 
+%$y = \{f(C_1),f(C_2),\dots,f(C_k)\}$
+%mit $|y|$ = $O(n)$ und in Zeit $O(n)$ kann dies "uberpr"uft werden.
+
+\begin{satz}
+F"ur alle Zielfunktionen $f$ gilt
+\[ \mbox{3--F"arbung} \ \alphared \ 3|\cdot|f .\]
+\end{satz}
+{\bf Beweis:}
+In einem ungerichteten Graphen $G=(V,E)$ seien $d_{ij}=1 \ \forall\,
+\{i,j\} \in E$. Das hei"st ein 3--Clustering--Problem hat genau dann eine
+L"osung mit Zielfunktionswert 0, wenn eine 3--F"arbung existiert.$\quad\Box$
+\vspace*{0.5cm}
+
+Unter einer beliebigen Distanzfunktion sind also bereits alle Probleme
+mit 3 oder mehr Clustern \NP--schwierig, zudem auch die 2--Cluster--Probleme
+$2|\cdot|\max \sum d_{ij}$, $2|\cdot|\sum\sum d_{ij}$ und $
+2|\cdot|\sum \frac 1n \sum d_{ij}$ (siehe hierzu Brucker [1978]).
+
+
+\subsection{Polynomial l"osbare Probleme}
+Das Problem $2|\cdot| \max \max d_{ij}$ ist hingegen polynomial l"osbar, 
+hierzu hat Brucker [1978] einen Algorithmus angegeben und die Optimalit"at
+seiner L"osung gezeigt.
+Auch ist bekannt, da"s einige Probleme polynomial l"osbar sind, wenn 
+die Distanzen im euklidischen Raum liegen. F"ur das Problem
+$2|m|\sum \frac 1n \sum d_{ij}$ hat Bock [1974]
+einen $O((\frac nm) 2^{m-1})$--Algorithmus entwickelt; dieser ist
+polynomiell f"ur festes $m$.
+F"ur $k|1|\sum \frac 1n \sum d_{ij}$ und
+$k|1|\max \max d_{ij}$ hat Brucker [1978] ein Verfahren
+zur L"osung vorgestellt, das auf folgender Eigenschaft beruht:
+%ebenso wie f"ur $k|1|\sum \max d_{ij}$:
+%Au"serdem gilt der
+
+
+\begin{satz}
+\label{satzdisjunkt}
+F"ur die Probleme $k|1| \sum \max d_{ij}$,
+$k|1| \max \max d_{ij}$ 
+und das Problem $k|m|\sum \frac 1n \sum d_{ij}$ 
+existiert eine optimale L"osung
+$C_1^*,\dots,C_k^*$ mit der Eigenschaft, da"s die konvexen H"ullen
+der $C_i^*$ disjunkt sind.
+\end{satz}
+{\bf Beweis: }
+Es gen"ugt zu zeigen, da"s jede optimale L"osung in eine mit konvexen
+Clustern "uberf"uhrt werden kann, ohne den Zielfunktionswert zu
+erh"ohen. O.B.d.A. nehmen wir an, da"s $C_1 = \{x_1,\dots,x_r\}$ 
+der Cluster ist, der den kleinsten Wert enth"alt. Sei $y$ ein Punkt
+aus der Wertemenge mit $y \not\in C_1$, aber $y$ liegt in der konvexen
+H"ulle von $C_1$. Dann k"onnen wir $y$ schreiben als
+\[ y \ = \ \sum_{\nu = 1}^r \lambda_\nu x_\nu \quad \mbox{mit }
+	\lambda_\nu \geq 0\quad \mbox{und } \sum_{\nu = 1}^r \lambda_\nu =1.\]
+F"ur die Abst"ande $d(x_i,y)$ zwischen $x_i\,(i=1,\dots,r)$ und $y$ gilt
+\begin{eqnarray*}
+ d(x_i,y)   & = & d(x_i,\sum_{\nu=1}^r \lambda_\nu x_\nu)
+	        \ \leq \ \sum_{\nu = 1}^r \lambda_\nu d(x_i,x_\nu)\\
+			& \leq & \max_{\nu = 1}^r d(x_i,x_\nu)
+			\ \leq \ \max_{i,j = 1 \atop i \neq j}^r d(x_i,x_j).
+\end{eqnarray*}
+Somit wird der Wert der Zielfunkton nicht erh"oht, wenn wir zu $C_1$ alle
+Punkte hinzunehmen, die in der konvexen H"ulle von $C_1$ liegen. In 
+$C_2,\dots,C_k$ entfernen wir alle diese Punkte und wenden das Verfahren
+erneut auf die nichtleeren Cluster $C_2,\dots,C_k$ an und erhalten somit
+nach $k$ Schritten eine Partitionierung mit der gew"unschten 
+Eigenschaft. F"ur den Fall, da"s die Anzahl der nichtleeren Cluster
+kleiner als $k$ geworden ist, m"ussen wir 
+einelementige Cluster konstruieren, die die konvexe Eigenschaft der
+anderen Cluster nicht verletzen,
+%Mengen konstruieren, 
+bis wir eine $k$--Partitionierung erhalten.
+
+F"ur den Beweis der Konvexit"at des Problems $k|m|\sum \frac 1n 
+\sum d_{ij}$  sei hier auf Bock [1974] verwiesen.
+$\quad\Box$
+\vspace*{0.5cm}
+
+\begin{satz}
+F"ur das Problem $k|1|\sum\max d_{ij}$ existiert eine
+optimale L"osung in der die $k-1$ gr"o"sten $d_i$--Werte
+($d_i = x_{i+1} - x_i$) die Clustergrenzen darstellen.
+\end{satz}
+{\bf Beweis:}
+Seien $x_1 < x_2 < \cdots < x_n$ die Punkte im 1--dimensionalen
+euklidischen $k$--Clustering--Problem, und angenommen, es existiert eine
+L"osung derart, da"s die konvexen H"ullen der einzelnen Cluster
+voneinander getrennt sind.
+Die optimale Partitionierung ist dann gegeben durch Mengen der Form
+\begin{eqnarray*}
+	C_1^* & = & \{x_1=x_{i_0},\dots,x_{i_1}\},\\
+	C_2^* & = & \{x_{i_1 +1},\dots,x_{i_2}\},\\
+	      & \vdots & \\
+	C_k^* & = & \{x_{i_{k-1}+1},\dots,x_{i_k}=x_n\}.
+\end{eqnarray*}
+Der entsprechende Zielfunktionswert ist dann
+\begin{eqnarray*}
+	f(C_1^*,\dots,C_k^*) 
+	 	& = & x_{i_1} - x_{i_0} + x_{i_2} - x_{i_1+1}+
+		 	\cdots + x_{i_{k-1}} - x_{i_{k-2}+1} + x_{i_k} - x_{i_{k-1}+1}\\
+		& = & x_{i_k} - x_{i_0} - \sum_{\nu = 1}^{k-1} x_{i_\nu +1} 
+			- x_{i_\nu}\\
+		& = & x_n - x_1 - \sum_{\nu = 1}^{k-1} d_{i_\nu}.
+\end{eqnarray*}
+%Das hei"st also, da"s die $k-1$ gr"o"sten $d_i$--Werte die 
+%Clustergrenzen darstellen.--
+Die $k-1$ gr"o"sten $d_i$--Werte minimieren also den Funktionswert.
+$\quad\Box$
+\vspace*{0.5cm}
+
+
+Die Konvex--Eigenschaft aus Satz \ref{satzdisjunkt} gilt nicht, 
+wenn wir die Zielfunktion durch $\max \sum d_{ij}$ oder $\sum \sum d_{ij}$
+ersetzen, wie folgendes Beispiel f"ur die Funktion $\sum \sum d_{ij}$
+zeigt:
+
+%\begin{beis}
+{\bf Beispiel:}
+Sei $E=\{0,5,6,7,12\}, \ k=2$. Dann existieren bis auf Symmetrie 2 konvexe
+Clusterungen:
+\vspace*{3mm}
+
+\input b1-2-1.pic
+
+\input b1-2-2.pic
+
+Betrachten wir jedoch
+\vspace*{3mm}
+
+\input b1-2-3.pic
+
+so erhalten wir $f = 12 \ + \ 1 + 1 + 2 = 16.$
+%\end{beis}
+Zum besseren Verst"andnis der Zahlen wurde bei
+der Summierung der Zielfunktionswerte 
+jede Strecke nur einmal addiert, da im euklidischen Raum 
+$d(x,y) = d(y,x)$ gilt. Die wirklichen Werte sind also doppelt so
+gro"s wie hier angegeben, "andern aber nichts an der Aussage.
+
+Die Probleme $k|2|\sum\max d_{ij}$ und $k|2|\max\max d_{ij}$ konnten
+Preparata \& Shamos [1985] auf das Auf\/finden der gr"o"sten Distanz
+in einem Polygon reduzieren. Dieses Problem zu l"osen ist mit
+linearem Aufwand m"oglich.
+
+
+\section{L"osungsstrategien}
+Es ist nicht schwierig einzusehen, da"s es f"ur gr"o"sere,
+schwierige Probleme kaum 
+m"oglich ist alle Gruppierungen zu berechnen ({\em Methode der totalen 
+Enumeration}).
+Selbst Verfahren wie die {\em dynamische Programmierung} oder {\em Branch
+and Bound} bieten keine wirtschaftliche Alternative, um eine optimale
+Gruppierung zu bestimmen.  Dementsprechend
+benutzen wir Heuristiken und Approximationsalgorithmen zur L"osung.
+
+Heuristische Verfahren gibt es nahezu beliebig viele (Anderberg [1973]).
+Alle haben sie gemeinsam, da"s sie sich an geometrisch--visuellen
+Vorstellungen von Cluster--Bildungen von in der Ebene verteilten 
+Punktobjekten orientieren. Dies ist sehr vern"unftig, da das visuelle
+Klassifizieren von Punkten in der Ebene durch Algorithmen im 
+allgemeinen nicht "ubertroffen werden kann.
+Tats"achlich sind die Cluster--Algorithmen erst in h"oheren Dimensionen
+der in zwei Dimensionen visuell m"oglichen Klassifikation
+"uberlegen.
+
+Grunds"atzlich gibt es drei verschiedene Verfahren:
+\begin{itemize}
+\item {\em hierarchische},
+\item {\em graphentheoretische} und
+\item {\em numerische}.
+\end{itemize}
+Erstgenanntes kann man weiter in {\em agglomerative} und {\em divisive}
+Verfahren
+unterteilen: Bei den agglomerativen geht man von einer Anfangspartition 
+aus, in der alle Elemente einen eigenen einzelnen Cluster bilden, 
+und man f"ugt nun solange Cluster zusammen, bis die gew"unschte
+Clusteranzahl erreicht ist.
+Hierf"uhr haben Anderberg [1973] einen $O(n^3)$--Algorithmus und
+Day \& Edelsbrunner [1984] einen $O(n^2)$--Algorithmus entwickelt.
+
+Bei den divisiven Methoden verf"ahrt man genau umgekehrt: Von einem
+"`Supercluster"' aus startend teilt man diesen in immer kleiner 
+werdende Haufen, bis man ebenfalls die gew"unschte Clusteranzahl
+erreicht hat. 
+Eine typische Vorgehensweise ist hierbei den gr"o"sten verbliebenen
+Cluster zweizuteilen. Mit dem hierarchischen Ansatz ist es auch
+m"oglich nicht disjunkte, nicht exhaustive Partitionierungen
+vorzunehmen.
+
+\begin{figure}[htp]
+\[\psfig{figure=b1-8}\]
+\caption{Hierarchischer Ansatz}
+\end{figure}
+
+Die graphentheoretischen Verfahren basieren auf
+Zusammenhangskomponenten, indem man die Elemente miteinander verbindet,
+deren Abstand unter einer gewissen Schranke $d$ liegt. Auf diese Weise
+versucht man soviele Zusammenhangskomponenten zu konstruieren, wie es
+die gew"unschte Clusteranzahl vorgibt.
+Eigenschaften dieses Verfahrens sind, da"s keine Zielfunktion ben"otigt
+wird und somit auch die entstehenden Cluster nicht notwendig kompakt
+("`rund"', "`ellipsoid"' oder "ahnlich) sind, sondern da"s sie sich
+kennzeichnenderweise
+verzweigen und sehr langgestreckt sein k"onnen.
+
+\begin{figure}[htp]
+\[\psfig{figure=b1-9}\]
+\caption{Graphentheoretischer Ansatz}
+\end{figure}
+
+Die dritte Gruppe bilden die numerischen Verfahren, die in ihrer
+Haupterscheinungsform sogenannte Austauschverfahren sind:
+Ausgehend von Startl"osungen versuchen sie durch Austauschalgorithmen
+eine optimale Partitionierung zu erzielen.
+Diese Verfahren sind auch unter dem Namen {\em hill climbing} bekannt.
+Eine solche Vorgehensweise beschreitet auch die {\em Lokale Suche}, die
+im folgenden Kapitel beschrieben wird.
+
+\begin{figure}[htp]
+\begin{center}
+\input b3-1.pic
+\end{center}
+\caption{Darstellung des Austauschverfahrens}
+\end{figure}
+
+F"ur den Fall, da"s die Clusteranzahl $k=2$ ist, gibt es noch einige
+spezielle L"osungsverfahren, auf die wir hier aber nicht weiter
+eingehen wollen, sondern dazu auf Rao [1971] verweisen.
+
+
+
+
+

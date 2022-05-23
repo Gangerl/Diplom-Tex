@@ -1,0 +1,56 @@
+\chapter{Zusammenfassung}
+Der Schlu"s der Arbeit besteht aus zwei Teilen: Der erste
+beschreibt die Erkentnisse, die "uber die Lokalen Sucheverfahren
+gewonnen wurden, der zweite besch"aftigt sich mit den Erfolgen dieser
+Verfahren auf den medizinischen Daten.
+
+\section{Lokale Suchverfahren}
+
+Die klassischen lokalen Suchverfahren haben den Nachteil, da"s sie um lokale
+Optima herum mehr oder weniger stark oszillieren und somit oft nur 
+einen kleinen Bereich des gesamten L"osungsraumes durchsuchen. Daher
+ist das Konvergenzverhalten nicht befriedigend.
+Abhilfe schaffen hier die kobinierten Verfahren wie Simulated Annealing / 
+Localopt und Combined Algorithms, wobei erster besser einen gro"sen 
+L"osungsraum durchsuchen kann, und zweiterer sehr schnell L"osungen findet.
+
+Um eine der Anschauung nach optimale Partitionierung auch bei
+sichelf"ormigen Gebilden wie in Kapitel \ref{sichel} zu erhalten, 
+k"onnte man vielleicht eine neue Zielfunktion entwickeln. Diese m"u"ste 
+bei der Bestimmung eines Wertes f"ur einen Cluster nicht die
+Distanzen aller Elemente zueinander in diesem Cluster
+ber"ucksichtigen, sondern zu jedem Element nur die Distanzen zu den 
+unmittelbar benachbarten Elementen.
+Damit k"onnte auch das Problem, da"s die Cluster unter den hier getesteten
+Zielfunktionen immer in etwa gleich gro"s sind, aus dem Weg geschafft werden.
+
+Lokale Suchverfahren scheinen aber ansonsten sehr vielversprechend zu sein,
+um Klassifikationsprobleme zu l"osen.
+Daf"ur spricht auch, da"s sie auf Ausrei"ser und Me"sfehler in der
+Datenmenge dadurch reagieren, da"s sie lokale Optima finden, bei denen
+ein solches Element keinem Cluster vern"unftig zugeordnet werden konnte.
+
+\section{Die medizinischen Daten}
+Eine mathematisch optimale Klassifizierung von medizinischen Daten
+scheint in der Realit"at wenig sinnvoll zu sein, wie das Kapitel \ref{medizin}
+zeigt. Zu viele Eigenschaften, die nicht in Zahlen gepre"st werden 
+k"onnen, spielen eine Rolle bei der Entwicklung von Krankheiten.
+
+Nur wenn ein definitives Merkmal eine Krankheit beschreibt, 
+k"onnen die getesteten Verfahren dieses ausfindig machen.
+Au"serdem sollte f"ur eine fundierte mathematische Betrachtung die
+Elementanzahl sehr viel gr"o"ser sein, und die Krankheitstypen
+gleichm"a"siger verteilt. Aussagen, die die Menge der Frauen betreffen,
+halte ich alle f"ur zu vage, da nur von 25 Frauen die Daten vorliegen.
+
+Bessere Anwendungsgebiete f"ur das Programm \Clustering\ sehe ich
+in Bereichen von zoologischen und botanischen Klassifikationssystemen,
+bei der Chemikern, die Stoffe nach ihren Eigenschaften klassifizieren
+und Elemente im Periodensystem ablegen, bei der Auswahl von Zustellgebieten,
+etwa der Verteilung von Postleitzahlen, oder etwa bei einer Untersuchung
+des Konsumentenverhaltens von Bev"olkerungsschichten.
+Eine andere M"oglichkeit w"are auch noch eine Einteilung in 
+Konfektionsgr"o"sen bei Menschen, die nach me"sbaren Daten wie K"orperl"ange,
+Gewicht, Umfang, Arml"ange etc. vorgenommen werden kann.
+
+

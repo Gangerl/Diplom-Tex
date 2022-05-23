@@ -1,0 +1,735 @@
+\chapter{Lokale Suche}
+\label{lokalesuche}
+Dieses Kapitel gibt einen "Uberblick "uber die verschiedenen Verfahren
+der lokalen Suche und deren Zusammenspiel mit den Zielfunktionen aus
+Kapitel \ref{zielfunktionenkapitel}. Ausgehend von einer allgemeinen
+Problemstellung und einem ersten Algorithmus werden immer weiter
+verfeinerte Algorithmen entwickelt, die sich der an sie gestellten
+Aufgabe optimal anpassen sollen.
+
+%\section{Grundlagen}
+\section{Situation}
+Ein diskretes Optimierungsproblem wird wie folgt beschrieben:
+Aus der endlichen Menge $S$ der zul"assigen L"osungen suchen wir 
+unter einer Zielfunktion $c:S \longmapsto \R$ diejenige L"osung
+$s^*$, f"ur die gilt
+\begin{equation}
+	c(s^*) \ \leq\  c(s) \quad \forall\, s \in S.
+\end{equation}
+
+Lokale Suche ist nun ein Verfahren, um schwierige Probleme
+in angemessener Zeit l"osen zu k"onnen, wobei man darauf verzichtet, 
+eine optimale L"osung zu erhalten.
+Daf"ur beginnt man mit einer Startl"osung $s_0$, konstruiert 
+"`benachbarte"' L"osungen und sucht sich unter diesen Nachbarn eine
+bez"uglich der Zielfunktion bessere L"osung als die bisherige und wendet
+das Verfahren erneut an, bis man eine L"osung gefunden hat, die keine
+besseren Nachbarn mehr besitzt. Dabei hei"st eine L"osung $t \in S$ {\em 
+benachbart} zu $s$, wenn wir $t$ von $s$ aus in einem Schritt erreichen.
+$N(s) = \{ t \,|\, t$ ist Nachbar von $s \}$ hei"st dann {\em Nachbarschaft}
+von $s$.
+
+\section{Nachbarschaften}
+\label{nachbarn}
+In der Klassifikationstheorie bietet sich folgende Nachbarschaft an:
+In einer gegebenen L"osung verschiebe ein Element $x_j$ aus einen Cluster
+in einen anderen und erhalte somit eine Nachbarl"osung.
+
+\begin{figure}[htp]
+\[
+\input b3-1.pic
+\]
+\caption{Nachbarl"osung}
+\end{figure}
+
+Wie der andere Cluster zu w"ahlen ist, stellt uns nat"urlich
+vor das Problem "`Finde einen geeigneten Cluster f"ur den Punkt $x_j$"'.
+Hierf"ur bieten sich mehrere Vorgehensweisen an:
+\begin{enumerate}
+\item W"ahle den Cluster aus, aus dem ein Punkt zu $x_j$ am n"achsten liegt
+	({\em Nearest--Cluster Nachbarschaft}).
+\item W"ahle den Cluster aus, dessen Schwerpunkt (Centroid) dem Punkt
+	$x_j$ am n"achsten liegt ({\em Centroid Nachbarschaft}).
+\item W"ahle einen Cluster zuf"allig aus ({\em Random Nachbarschaft}).
+\end{enumerate}
+Diesen Verfahren ist nat"urlich gemeinsam, da"s der neue Cluster
+ungleich dem sein soll, in dem $x_j$ derzeit liegt.
+Das Random--Verfahren dient hierbei nur zu Vergleichszwecken, zum einen
+um zu testen, wie gut die Algorithmen auf unstrukturierten Nachbarschaften
+arbeiten, zum anderen um die anderen Verfahren besser einsch"atzen zu
+k"onnen.
+Das zweite Verfahren, Centroid Nachbarschaft, wird in der Literatur
+h"aufig verwendet, jedoch in einer spezielleren Form, auf die wir sp"ater
+noch zur"uckkommen wollen. Unser Hauptaugenmerk wollen wollen wir also
+auf die Nearest--Cluster Nachbarschaft richten.
+
+\begin{figure}[htp]
+\[\psfig{figure=b3-2}\]
+\caption{Nearest--Cluster Nachbarschaft: W"ahle den Cluster aus, in
+	dem ein Punkt der n"achste ist.}
+\end{figure}
+
+Bei einer gleichm"a"sigverteilten Anfangsl"osung beginnt der Proze"s der
+Clusterbildung recht langsam, wie Abbildung \ref{b3-3} zeigt.
+\begin{figure}[htp]
+\[\psfig{figure=b3-3}\]
+\caption{Gleichm"a"sige Startl"osung und m"ogliche Anordnung nach 3
+	Rechenschritten \label{b3-3}}
+\end{figure}
+
+Wenn sich aber bereits Cluster gebildet haben, werden h"ochstens noch
+die Randpunkte verschoben (Abbildung \ref{b3-4}).
+
+\begin{figure}[htbp]
+\[\psfig{figure=b3-4}\]
+\caption{m"oglicher weiterer Ablauf \label{b3-4}}
+\end{figure}
+
+Das Auf\/finden eines Nachbarclusters ist nat"urlich viel zu aufwendig,
+wenn daf"ur die gesamte Punktmenge durchlaufen werden mu"s.
+Wie man sich an Abbildung \ref{b3-5} 
+verdeutlichen kann, ist es sicher nicht n"otig f"ur den mittleren Punkt des
+Clusters mit den Kreisen einen neuen Cluster zu suchen
+(oder f"ur den Punkt links unten in den 
+Abbildungen \ref{b3-3} und \ref{b3-4}), 
+da er in seiner Umgebung zuviele Punkte aus dem eigenen Cluster besitzt.
+Dementsprechend gibt man sich eine Zahl $t$ vor, die die Anzahl der
+betrachteten Nachbarpunkte beschr"ankt.
+Diese N"achstenachbarn--Anzahl ist sicherlich von der Anzahl der zu 
+betrachtenden Elemente und ihrer Verteilung abh"angig. Wir werden
+versuchen, einen optimalen Wert f"ur diese Zahl zu bestimmen.
+
+\begin{figure}[htbp]
+\[ \psfig{figure=b3-5} \]
+\caption{Der mittlere Punkt im Kreis--Cluster braucht derzeit sicher keinem
+anderen Cluster zugeordnet werden. \label{b3-5}}
+\end{figure}
+
+Wir bekommen also folgende Prozedur, die uns aus einer gegebenen L"osung
+und einem gegebenen Punkt eine Nachbarl"osung konstruiert,  und die true
+zur"uckliefert, wenn sie eine gefunden hat, sonst false.
+Zur Beschreibung dieser und folgender Prozeduren und Algorithmen 
+verwenden wir "`Pseudo--Pascal"', 
+das hei"st Schleifen, Bl"ocke und Bedingungskonstrukte aus 
+der Programmiersprache {\sc Pascal} vermischt mit
+mathematischen Formulierungen.
+
+\begin{algorithm*}
+PROCEDURE Nearest--Cluster : BOOLEAN;\\
+BEGIN
+\begin{Block}
+	W"ahle zu dem gegebenen Punkt den besten Nachbarcluster NC, ungleich dem 
+	aktuellen Cluster von x, aus den n"achsten $t$ Punkten von x aus;\\
+	IF NC gefunden THEN BEGIN
+	\begin{Block}
+		Verschiebe $x$ in den Cluster NC;\\
+		RETURN true;
+	\end{Block}
+	END;\\
+	RETURN false;
+\end{Block}
+END;
+\end{algorithm*}
+
+
+Die  Random Nachbarschafts Prozedur wird nicht aufgef"uhrt;
+sie w"ahlt einfach zuf"allig einen Cluster aus und
+l"a"st sich sehr leicht nach obigem Vorbild konstruieren.
+
+Es kommt hierbei nat"urlich vor, da"s f"ur den einen oder anderen Punkt
+kein Cluster gefunden wird. Darauf m"ussen die Algorithmen nat"urlich
+entsprechend reagieren, z.B. indem sie versuchen andere Punkte zu 
+verschieben. Somit erhalten wir ein Abbruchkriterium: Wenn f"ur keinen
+Punkt ein neuer Cluster unter seinen $t$ n"achsten Nachbarn zu
+finden war, dann STOP.
+
+Man kann noch ein weitergehendes System der Nachbarschaftsbildung 
+konstruieren: Verschiebe nicht immer nur einen Punkt und betrachte dieses
+dann als Nachbarn, dessen Zielfunktionswert man betrachtet, 
+sondern verschiebe {\it alle} Punkte zu je einem m"oglichen neuen Cluster!
+
+Diese Methode l"a"st sich auf Nearest--Cluster Nachbarschaft
+anwenden: Suche f"ur alle Punkte zugleich einen neuen Cluster.
+Dieses Verfahren wollen wir dann mit 
+{\em Simultaneous--Nearest--Cluster Nachbarschaft} bezeichnen.
+
+Diese Vorgehensweise wird von den meisten Autoren f"ur die
+Centroid Nachbarschaft verwendet, wir wollen hier aber, damit die 
+Begriffe nicht durcheinandergeraten, dementsprechend auch von
+{\em Simultaneous--Centroid Nachbarschaft} sprechen:
+In jedem Iterationsschritt werden die Gruppencentroide berechnet und alle
+Punkte simultan in den Cluster verschoben, dessen Centroid ihnen am 
+n"achsten liegt. Somit bekommen wir jeweils nur noch genau einen 
+m"oglichen Nachbarn und k"onnen nicht mehr einen zuf"alligen oder
+besten ausw"ahlen. Das hei"st, die Algorithmen m"ussen dementsprechend
+angepasst werden.
+
+\begin{algorithm*}
+PROCEDURE Simultaneous--Centroid : BOOLEAN;\\
+BEGIN
+\begin{Block}
+	success := false;\\
+	Berechne die Gruppencentroide;\\
+	FOR all Punkte DO BEGIN
+	\begin{Block}
+		Verschiebe, falls n"otig, den Punkt in den Cluster mit
+		dem n"achsten Gruppencentroid;\\
+		IF es wurde ein neuer Cluster gefunden THEN success := true;
+	\end{Block}
+	END;\\
+	RETURN success;
+\end{Block}
+END;
+\end{algorithm*}
+
+F"ur die Nearest--Cluster Nachbarschaft kann die Prozedur nat"urlich
+analog formuliert werden. Die R"uckgabe eines Wahrheitswertes, der 
+aussagt ob ein Punkt verschoben wurde, erleichtert den Abbruch des
+eigentlichen Verfahrens, wenn es keine Ver"anderungen an der L"osung
+gegeben hat (man spart so eine Berechnung des Zielfunktionswertes).
+
+Eine Anwendung auf die Random Nachbarschaft scheint nicht erfolgsversprechend, 
+denn wenn jedesmal alle Punkte einem zuf"alligen Cluster zugeordnet 
+werden, kann dies nicht vern"unftig sein.
+
+Das Verhalten der Simultaneous--Nearest--Cluster Nachbarschaft l"a"st sich
+nicht so leicht einsch"atzen: Bei bereits existierenden H"aufungen erfolgt
+die Nachbarauwahl sicher sehr gut. Jedoch wird bei 2 Elementen, die eine
+geringe Distanz zueinander aufweisen und in verschiedenen Clustern liegen, 
+ein Austausch stattfinden. Dementsprechend erwarten wir von der 
+Simultaneous--Centroid Nachbarschaft die besseren Ergebnisse.
+
+Um sp"ater die Nearest--Cluster Nachbarschaft besser mit der 
+Simul\-taneous--Centro\-id Nachbarschaft
+vergleichen zu k"onnen, entwickeln wir auch noch das naheliegende
+Verfahren {\em Cent\-roid Nachbarschaft} bei dem auch zu nur 
+einem vorgegebenen Punkt $x$ ein neuer Cluster gesucht wird.
+Auch diese Routine kann analog zu obiger Prozedur Nearest--Cluster
+bestimmt werden.
+
+\section{Algorithmen}
+\label{algorithmeneins}
+
+Aus der Nachbarschaftsidee lassen sich nun verschiedene Algorithmen
+konstruieren. Der grundlegende, auf den alle weiteren aufgebaut sind,
+ist folgender:
+
+\begin{algorithm}{Local Search}
+W"ahle eine Startl"osung $s \in S$;\\
+REPEAT
+\begin{Block}
+	W"ahle einen Nachbarn $s' \in N(s)$ mit $c(s') < c(s)$;
+\end{Block}
+UNTIL Stopkriterium;\\
+best $ := c(s)$;\\
+$s^\ast := s$;
+\end{algorithm}
+
+Als Stopkriterium w"ahlt man i.a. eine Bedingung wie $c(s') \geq c(s)
+\ \forall\, s' \in N(s)$.
+Somit ist die Terminierung des Algorithmuses gesichert, da  wir nur mit einer
+L"osung, die einen kleineren Funktionswert als die vorherige besitzt,
+einen neuen Schleifendurchlauf beginnen, und wir somit nicht zu 
+bereits besuchten L"osungen zur"uckkehren.
+Da die Anzahl der m"oglichen Partitionen endlich ist, mu"s der
+Algorithmus terminieren.
+Dieser Algorithmus kann verschiedene L"osungen $s^*$ liefern, da er leicht
+in sogenannten {\em lokalen Optima} endet und das globale Minimum nur
+zuf"allig erreichen kann. 
+
+Bei der Nachbarauswahl haben wir im vorherigen Abschnitt gesehen, 
+da"s man nicht zu allen Punkten einen Nachbarn bestimmen kann.
+Wenn also nun
+die Nachbarschaftsprozedur keinen neuen Cluster zur"uckliefern
+kann, z.B. weil die Nearest--Cluster Nachbarschaft keinen Punkt eines
+anderen Clusters in der Umgebung unseres Punktes gefunden hat, oder weil die
+Centroid Nachbarschaft den gleichen Cluster zur"uckliefert, dann 
+m"ussen die anderen Punkte der Punktmenge getestet werden. Wenn kein
+Punkt mehr eine Verbesserung des Zielfunktionswertes verspricht,
+terminiert das Verfahren.
+
+Um jetzt alle Punkte abarbeiten zu k"onnen, ben"otigen wir eine
+geordnete Liste, und damit wir diese nicht immer von vorn durchlaufen
+m"ussen, brauchen wir einen zuf"alligen Anfangspukt in dieser Liste.
+Die Liste l"a"st sich auch einfach "uber die Indizes der Elemente
+darstellen.
+
+Der folgende Algorithmus benutzt als Nachbarschaft
+Nea\-rest--Cluster, es k"onn\-te aber an der entsprechenden
+Stelle genausogut Cent\-roid oder Ran\-dom stehen.
+
+\begin{algorithm}{Local Search --- Modified}
+\label{localopt}
+\label{listenalgo}
+W"ahle eine Startl"osung $s \in S$;\\
+REPEAT
+\begin{Block}
+	point := Rand(1,anzahl);\\
+	n := 0;\\
+	success := false;\\
+	REPEAT
+	\begin{Block}
+		point := (point + n) modulo (anzahl+1);\\
+		IF point = 0 THEN INC(point);\\
+		$s' := s$;\\
+		IF Nearest--Cluster($s'$, point) THEN
+		\begin{Block}
+			IF $c(s') < c(s)$ THEN BEGIN
+			\begin{Block}
+				$s := s'$;\\
+				success := true;
+			\end{Block}
+			END;
+		\end{Block}
+		INC(n);
+	\end{Block}
+	UNTIL (n $>$ anzahl) oder success;
+\end{Block}
+UNTIL n $>$ anzahl;\\
+best $ := c(s)$;\\
+$s^\ast := s$;
+\end{algorithm}
+
+Eine eigene Prozedur f"ur den Programmteil, der "uberpr"uft, ob ein 
+Nachbar aus diesem Punkt konstruiert werden kann, w"are w"unschenswert.
+Da aber die Aufgaben einer solchen Routine dem jeweiligen Algorithmus
+angepasst w"aren, und somit eine solche Prozedur zu genau einem 
+Algorithmus geh"orte, kann man darauf auch verzichten.
+
+Eine Verbesserung der Konvergenzeigenschaft wird erreicht, indem man  nicht
+mit einem beliebigen besseren Nachbarn, sondern mir dem besten Nachbarn
+einen neuen Iterationsschritt beginnt:
+
+\begin{algorithm}{Iterative Improvement}
+\label{iterativeimprovement}
+W"ahle eine Startl"osung $s \in S$;\\
+{REPEAT}
+\begin{Block}
+	W"ahle den Nachbarn $s'$ von $s$ in $N(s)$ mit kleinstem 
+	Zielfunktionswert aus;\\
+	{IF} $c(s') < c(s)$ {THEN} $s := s'$;
+\end{Block}
+{UNTIL} $c(s') \geq c(s)$;\\
+best := $c(s)$;\\
+$s^* := s$;
+\end{algorithm}
+
+Jedoch erreichen wir auch bei diesem Verfahren nur lokale Optima,
+i.a.\ ein wenig schneller. 
+
+Nun wollen wir noch den modifizierten Algorithmus 
+vorstellen, der auf einer Simultaneous Nachbarschaft arbeitet.
+Er arbeitet f"ur die Verfahren Local Search und Iterative Improvement
+gleich, da wir nicht mehr einen bestimmten Nachbarn ausw"ahlen k"onnen.
+
+\begin{algorithm}{Simultaneous}
+\label{simultaneous}
+W"ahle eine Startl"osung $s \in S$;\\
+REPEAT
+\begin{Block}
+	Bestimme den Nachbarn $s'$ von $s$ gem"a"s der
+	Simultaneous Nachbarschaft;
+\end{Block}
+UNTIL Stopkriterium;\\
+best $ := c(s)$;\\
+$s^\ast := s$;
+\end{algorithm}
+
+F"ur dieses Verfahren gilt folgender
+
+\begin{satz}
+F"ur die durch Algorithmus \ref{simultaneous} unter der Nachbarschaft Centroid
+konstruierte Folge von Gruppierungen
+\[ \G^1, \G^2,\dots,\G^r,\G^{r+1},\dots\qquad \mbox{mit } \G^r := \{
+	C_1^r,\dots,C_k^r\} \]
+gilt unter der Distanznorm $||\cdot||$
+\[ Z_1(\G^1) \geq Z_1(\G^2) \geq \cdots \geq Z_1(\G^r) \geq Z_1(\G^{r+1})
+	\geq  \cdots . \]
+$Z_1$ ist hierbei wieder das Varianzkriterium aus \ref{zielfunktionenkapitel},
+das "aquivalent zu $F_3$ ist.
+\end{satz}
+
+{\bf Beweis:}
+\vspace{-3mm}
+\begin{eqnarray*}
+Z_1(\G^r) & = & 
+			 \sum_{l=1}^k \sum_{i \in C_l^r} || x_i - \bar x _l^r ||^2\\
+	& \geq & \sum_{l=1}^k \sum_{i \in C_l^r} \min_j || x_i - \bar x _j^r ||^2\\
+	& =    & \sum_{l=1}^k \sum_{i \in C_l^{r+1}} || x_i - \bar x _l^r ||^2\\
+	& \geq & \sum_{l=1}^k \sum_{i \in C_l^{r+1}} || x_i - \bar x _l^{r+1} ||^2\\
+	& =    & Z_1(\G^{r+1})\qquad\Box
+\end{eqnarray*}
+\vspace{5mm}
+
+Das hei"st eine im $(r+1)$--ten Schritt gewonnene Gruppierung liefert den
+gleichen oder einen besseren Wert der Zielfunktion als die im $r$-ten
+Schritt. 2 F"alle sind denkbar:
+
+Fall 1: Mehrere Gruppierungen reproduzieren sich in periodischer Reihenfolge.
+
+Dieser Fall ist nicht auszuschlie"sen, aber mehr theoretisch und kommt in 
+der Praxis selten vor.
+
+Fall 2: Das Verfahren bricht ab, da zwei aufeinanderfolgende Gruppierungen
+gleich sind.
+
+In diesem Fall hat man wieder ein lokales Minimum gefunden.
+
+Da der erste Fall "au"serst selten ist, kann man das Stopkriterium 
+formulieren als $s = s'$, oder besser als $c(s') \geq c(s)$.
+
+\begin{figure}[htbp]
+\[ \input b2-2.pstex_t \]
+\caption{M"ogliche L"osungsverteilung \label{bergundtal}}
+\end{figure}
+
+Wie man sich an der Abbildung \ref{bergundtal} verdeutlichen kann, 
+braucht man also eine
+Nachbarschaftsauswahl, die auch Spr"unge "uber lokale Berge zul"a"st,
+damit man bessere Optima finden kann.
+
+Um also zu vermeiden, da"s der Algorithmus in einem lokalen Optimum terminiert, 
+da die Nachbarauswahl keine anderen L"osungen mehr zul"a"st, gibt es
+ein mehr zufallsgesteuertes Verfahren, genannt {\em Simulated
+Annealing}.
+Hierbei beginnt man einen Iterationsschritt 
+auch mit solchen Nachbarl"osungen, die den 
+Zielfunktionswert zwar nicht verbessern, die aber zumindest in einer
+gewissen N"ahe liegen. Diese ist abh"angig von der Laufzeit des
+Algorithmus und wird automatisch gesteuert. Das hei"st:
+Nach Wahl einer Startl"osung akzeptiert man in jeder Iteration eine
+Nachbarl"osung $s'$ mit der Wahrscheinlichkeit
+\[
+	\min \{1, \exp(-\frac{c(s') - c(s)}{c_i}) \},
+\]
+wobei die $c_i$ eine monoton fallende Folge mit $\lim_{i \to \infty}
+c_i = 0$ sind.
+Der $c_{i+1}$--Wert wird im allgemeinen durch eine Funktion $g(c_i)$ 
+gegeben.
+Eine Betrachtung obiger Wahrscheinlichkeit zeigt, da"s eine bessere
+Nachbarl"osung immer, eine schlechtere dagegen eher zu Beginn des 
+Verfahrens akzeptiert wird, und ein Verlassen eines lokalen Minimums
+zul"a"st.
+Als Nachbarschaft kommen die Simul\-taneous Versionen nicht in 
+Frage, da wir bei ihnen nur "`straight forward"' gehen, aber
+nicht unter verschiedenen Nachbarn w"ahlen k"onnen.
+
+Eine Schwierigkeit ist nun, wie dieses Verfahren beendet werden soll.
+Nach einer gewissen Laufzeit wird es immer unwahrscheinlicher, da"s 
+noch gute L"osungen gefunden werden, aber m"oglich ist es nat"urlich.
+
+Im folgenden Algorithmus liefere $rand(0,1)$ eine gleichverteilte
+Zufallszahl zwischen 0 und 1.
+
+\begin{algorithm}{Simulated Annealing}
+i := 0;\\
+Initialisiere $c_0$;\\
+W"ahle eine Startl"osung $s \in S$;\\
+best := $c(s)$;\\
+$s^* := s$;\\
+{REPEAT}
+\begin{Block}
+	W"ahle eine zuf"allige L"osung $s' \in N(s)$;\\
+	{IF} $rand(0,1) < \min \{1,\exp({\scriptstyle - \frac{c(s') - c(s)}
+	{c_i}})\}$ {THEN} $s := s'$;\\
+	{IF} $c(s') < $ best {THEN BEGIN}
+	\begin{Block}
+		$s^* := s'$;\\
+		best := $c(s')$;
+	\end{Block}
+	{END};\\
+	$c_{i+1} := g(c_i)$;\\
+	i := i + 1;
+\end{Block}
+{UNTIL} Stopkriterium;
+\end{algorithm}
+
+Es kann gezeigt werden, da"s unter bestimmten Bedingungen, die in der
+Praxis normalerweise erf"ullt sind, dieser Algorithmus asymptotisch
+konvergent ist (Hajek [1988]).
+Der Wert $c_0$ sollte anfangs gro"s genug gew"ahlt werden, damit zu
+Beginn die Akzeptanz--Wahrscheinlichkeit nahe bei 1 liegt. Eine
+gebr"auchliche Funktion f"ur $g(c_i)$ ist $c_{i+1} = \alpha c_i$,
+wobei ein Wert f"ur $\alpha$ typischerweise aus dem Intervall 
+$[0.8,0.99]$ gew"ahlt wird.
+Mehr "uber die Kontrollfunktion $g$ und das Stopkriterium findet man in
+Van Laarhoven und Aarts [1987]; eine M"oglichkeit den Algorithmus
+zu terminieren ist ihn nach einer bestimmten Laufzeit zu stoppen, 
+wie es auch das Programm, das in Kapitel \ref{handbuch} beschrieben
+ist, erm"oglicht.
+Eine andere Methode ist, den Algorithmus zu beenden, wenn $c_i$ kleiner
+als eine festgelegt Schranke geworden ist.
+Ein drittes Abbruchkriterium liegt vor, wenn kein Nachbar mehr gefunden wurde,
+wie es bei unseren Nachbarschaften geschehen kann. Das hei"st wir
+verwenden analog zu Algorithmus \ref{listenalgo} auch hier eine Liste,
+die "`zuf"allig"' "uber die Punkte f"uhrt, und die beim Erreichen des 
+Endes der Liste den Algorithmus terminiert.
+Eine weitere M"oglichkeit des Abbruchs liegt vor, wenn in einer Zeitspanne
+von einer gewissen Anzahl von Schritten keine Verbesserung stattgefunden hat.
+
+Nach einer Idee von Brucker et al. [1993] kann man Simulated Annealing
+auch mit einem der vorhergehenden Verfahren Local Search oder besser
+Iterative Improvement kombinieren:
+F"ur das verwendete Verfahren (Local Search oder Iterative Improvement)
+gebrauchen wir in diesem Zusammenhang die Bezeichnung {\em Localopt}.
+Ausgehend von einer L"osung, die Localopt
+liefert, w"ahlt man in der REPEAT\dots UNTIL--Schleife von
+Simulated Annealing nicht irgendeinen Nachbarn aus, sondern
+man wendet auf diesen Nachbarn erst Localopt an. 
+Wir bekommen dann den
+
+\begin{algorithm}{Simulated Annealing / Localopt}
+i := 0;\\
+Initialisiere $c_0$;\\
+Wende Localopt an und erhalte somit eine Startl"osung $s$;\\
+best := $c(s)$;\\
+$s^* := s$;\\
+{REPEAT}
+\begin{Block}
+	W"ahle eine zuf"allige L"osung $s' \in N(s)$;\\
+	Wende auf $s'$ Localopt an;\\
+	{IF} $rand(0,1) < \min \{1,\exp({\scriptstyle - \frac{c(s') - c(s)}
+	{c_i}})\}$ {THEN} $s := s'$;\\
+	{IF} $c(s') < $ best {THEN BEGIN}
+	\begin{Block}
+		$s^* := s'$;\\
+		best := $c(s')$;
+	\end{Block}
+	{END};\\
+	$c_{i+1} := g(c_i)$;\\
+	i := i + 1;
+\end{Block}
+{UNTIL} Stopkriterium;
+\end{algorithm}
+
+Hierbei ist es auch m"oglich verschiedene Nachbarschaften einzusetzen:
+Man benutzt z.B. Nearest--Clu\-ster in Simu\-lated An\-nea\-ling und
+Simul\-taneous--Nea\-rest--Clu\-ster in der Local\-opt--Prozedur.
+
+Eine kleine Ver"anderung der Akzeptanz--Regel bei Simulated Annealing
+f"uhrt zu dem Verfahren {\em Threshold Acceptance}, bei dem
+eine Nachbarl"osung dann akzeptiert wird, wenn die Differenz
+$c(s') - c(s) < t_i$ ist, wobei $t_i$ wieder eine monoton fallende, 
+nichtnegative Folge ist:
+
+\begin{algorithm}{Threshold Acceptance}
+i := 0;\\
+Initialisiere $t_0$;\\
+W"ahle eine Startl"osung $s \in S$;\\
+best := $c(s)$;\\
+$s^* := s$;\\
+{REPEAT}
+\begin{Block}
+	W"ahle eine zuf"allige L"osung $s' \in N(s)$;\\
+	%{\bf IF} $rand(0,1) < \min \{1,\exp({\scriptstyle - \frac{c(s') - c(s)}
+	%{c_i}})\}$ {\bf THEN} $s := s'$;\\
+	{IF} $c(s') - c(s) < t_i$ {THEN} $s := s'$;\\
+	{IF} $c(s') < $ best {THEN BEGIN}
+	\begin{Block}
+		$s^* := s'$;\\
+		best := $c(s')$;
+	\end{Block}
+	{END};\\
+	$t_{i+1} := g(t_i)$;\\
+	i := i + 1;
+\end{Block}
+{UNTIL} Stopkriterium;
+\end{algorithm}
+
+"Ahnlich wie Simulated Annealing liefert dieses Verfahren bei sehr langen
+Rechenzeiten gute Ergebnisse.
+Nachteile dieser drei zuletzt genannten Verfahren sind einmal das
+erw"ahnte Terminierungsproblem, und zum anderen die Gefahr, zu 
+bereits besuchten L"osungen zur"uckzukehren. 
+Diese R"uckkehr kann positiv sein, wenn man von dort aus zu besseren
+L"osungen als im ersten Durchlauf kommt, aber auch negativ, wenn
+l"angere Zyklen entstehen.
+Einen Ausweg hieraus bietet das Verfahren {\em Tabu Suche}:
+% auf das 
+%jedoch im Rahmen dieser Arbeit nicht n"aher eingegangen wird,
+%da die bisher vorgestellten Algorithmen sehr gute L"osungen liefern,
+%wie wir in Kapitel \ref{auswertungen} sehen werden, und Tabu Suche
+%einen hohen Verwaltungsaufwand erfordert.
+
+Bereits besuchte L"osungen werden in einer sogenannten {\em Tabu Liste}
+gespeichert, und es werden nur solche L"osungen akzeptiert, die
+sich nicht in der Liste befinden. Nat"urlich ist es viel zu aufwendig,
+alle besuchten L"osungen zu speichern und jedesmal eine m"ogliche
+neue L"osung mit allen in der Tabu Liste befindlichen zu vergleichen.
+Aus diesem Grund speichert man bei einer neuen L"osung nur die 
+speziellen Merkmale in der Liste ab. Dann sind alle die L"osungen
+{\em tabu}, die ein Merkmal aus der Tabu Liste aufweisen. 
+Wenn nun die Tabu Liste eine L"ange $t$ hat, k"onnen keine Zyklen
+mit L"ange $\geq t$ auftreten.
+
+F"ur unser Partitionierungsproblem bietet es sich nun an, in der
+Tabu Liste den zuletzt verschobenen Punkt zu speichern; das hei"st
+es empfehlen sich nur die nicht 
+Simul\-taneous Nachbarschaften, da sich bei diesen
+die Nachbarl"osungen zu sehr von ihrer Ausgangsl"osung unterscheiden.
+
+Die L"ange der Tabu Liste kann somit h"ochstens gleich der Anzahl der
+Elemente $-1$ sein, besser ist es nat"urlich deutlich darunter zu 
+bleiben, sagen wir die L"ange betrage $r\%$ der Elementanzahl.
+F"ur die Zahl $r$ werden wir durch Testreihen versuchen einen 
+optimalen Wert zu bestimmen. Die Tabu Liste wird bei dieser
+Anwendungsform nat"urlich zyklisch durchlaufen.
+
+Neben der Tabu Liste gibt es noch das sogenannte {\em Aspiration
+Criterion}. Eine L"osung, die eigentlich tabu ist, kann dann doch als
+neue L"osung akzeptiert werden, wenn sie das Aspiration Criterion
+erf"ullt. Zum Beispiel kann dies der Fall sein, wenn  die neue L"osung
+um einen gewissen Faktor $k$ besser ist als die alte.
+
+\begin{algorithm}{Tabu Search}
+W"ahle eine Startl"osung $s \in S$;\\
+best := $c(s)$;\\
+$s^* := s$;\\
+Tabu--Liste := $\emptyset$;\\
+{REPEAT}
+\begin{Block}
+	$Cand(s) := \{ s' \in N(s) | $ Der "Ubergang zu $s'$ ist nicht tabu,
+	oder $s'$ erf"ullt das Aspiration Criterion$\}$;\\
+	W"ahle eine L"osung $\bar s \in Cand(s)$;\\
+	Tabu--Liste := Tabu--Liste $\cup\  \{ \bar s \}$;\\
+	$s := \bar s$;\\
+	IF $c(s) < $ best THEN BEGIN
+	\begin{Block}
+		$s^\ast := s$;\\
+		best := $c(s)$;
+	\end{Block}
+	END;
+\end{Block}
+UNTIL Stopkriterium;
+\end{algorithm}
+
+Jetzt ist noch festzulegen, wie die L"osung $\bar s$ aus der Menge 
+$Cand(s)$ zu w"ahlen ist. Eine einfache Methode w"are: W"ahle $\bar s$ mit
+$c(\bar s) = \min \{ c(s') | s' \in Cand(s) \}$. Dies ist allerdings f"ur
+gro"se Probleme ($n \geq 50$) in angemessener Zeit nicht zu realisieren.
+Anstelle dessen treffen wir folgendes Auswahlkriterium: W"ahle aus einem
+nicht zu gro"sen Prozentsatz der L"osungen in $Cand(s)$ die beste aus.
+
+F"ur das Stopkriterium gelten die Aussagen von Simulated Annealing.
+
+Es hei"st, da"s Tabu Suche i.a. sehr schnell ist --- wir werden versuchen
+diese Aussage zu best"atigen.
+
+Wir erhalten somit folgende M"oglichkeiten, den Algorithmus und
+die Nachbarschaft auszuw"ahlen:
+
+\begin{table}[htp]
+\begin{center}
+\begin{tabular}{|l|c|c|}
+\hline
+& \multicolumn{2}{c|}{Nachbarschaft}\\
+ \raisebox{1.5ex}[1.5ex]{Algorithmus} & Single & Simultaneous \\
+ \hline
+ Local Search & ja & ja \\
+ Iterative Improvement & ja & wie Local Search \\
+ Simulated Annealing & ja & nein\\
+ SA / Localopt & SA und Localopt & nur Localopt\\
+ Threshold Acceptance & ja & nein\\
+ Tabu Search & ja & nein\\
+ \hline
+\end{tabular}
+\end{center}
+\caption{Kombinierbare Algorithmen und Nachbarschaften}
+\end{table}
+
+Es bleibt anzumerken, da"s bei all diesen Algorithmen auch L"osungen mit
+einem oder mehreren leeren Clustern entstehen k"onnen, wenn im Laufe
+des Verfahrens nach und nach alle Elemente aus diesen Clustern anderen
+zugewiesen werden, ohne da"s neue hinzukommen. Das Programm \Clustering\
+verhindert dies, indem es Partitionen mit leeren Clustern einen sehr gro"sen
+Zielfunktionswert zuordnet, so da"s diese nicht eine akzeptable
+Nachbarl"osung sein k"onnen. Es bleiben dann in der Regel
+einpunktige Cluster zur"uck. Man sollte sich beim Auftreten dieses Falles
+Gedanken machen, ob die gew"ahlte Clusteranzahl dem Problem entspricht.
+
+\section{Startl"osungen}
+Um eine Startl"osung zu erhalten, ben"otigt man eine Heuristik.
+Je nachdem wie gut die Anfangspartition sein soll, mu"s hierf"ur
+mit mehr oder weniger Aufwand gerechnet werden.
+Eine m"ogliche Anfangsl"osung ist zum Beispiel die Elemente
+per Zufallsfunktion in Cluster zu verteilen; eine andere sie einfach
+der Reihe nach den Clustern zuzuordnen.
+
+F"ur den Verlauf des Algorithmus scheint es geschickt zu sein,
+mit einer m"oglichst guten L"osung zu starten, 
+um dadurch die Laufzeit zu senken.
+Andererseits kann es so eher geschehen, da"s man in einem lokalen 
+Optimum endet, 
+w"ahrend man mit einer zuf"alligen Anfangspartition sicher bessere
+Chancen hat, die globale L"osung zu finden.
+Dies gilt vor allem dann, wenn der Algorithmus mehrfach auf das
+Problem angewandt wird, und man die L"osungen vergleichen kann.
+
+
+\section{Verhalten der Nachbarschaften}
+\subsection*{Single Nachbarschaften}
+
+Man kann davon ausgehen, da"s 
+unter einer der Maximierungs--Zielfunktionen $\max\max$, $\max \sum$,
+$\sum\max$
+die Algorithmen mit Single Nachbarschaften 
+sehr schnell terminieren, ohne
+eine gute L"osung gefunden zu haben. Denn wenn durch die 
+Nachbarschaften bedingt eine Nachbarl"osung gew"ahlt wird, die das
+aktuelle Maximum nicht verringert, so wird das Verfahren beendet.
+Folgendes Beispiel zeigt dies, wenn als Zielfunktion $\max\max$
+gew"ahlt ist.
+
+{\bf Beispiel:}
+Ausgangsl"osung sei
+
+\begin{center}
+\input b2-1.pic
+\end{center}
+
+bei der die Distanzen zwischen den 3 Quadraten gleich und 
+betragsm"a"sig die gr"o"sten sein sollen. 
+Der Kreis steht f"ur beliebig viele Elemente in anderen Clustern.
+Der Zielfunktionswert wird also im Cluster mit den Quadraten angenommen.
+Wird ein Element aus dem Kreis dem Cluster der Quadrate zugeordnet, 
+so "andert sich an dem Wert der Zielfunkton nichts; andererseits, 
+wenn ein Quadrat einem anderen Cluster zugeordnet wird, ver"andert
+dies den Zielfunktionswert auch nicht, da noch immer zwei Elemente mit
+maximaler Distanz in ein und demselben Cluster liegen.
+
+\subsection*{Simultaneous Nachbarschaften}
+\label{combined}
+Obiges Problem kann bei den Simultaneous Nachbarschaften nicht auftreten,
+da der neue Zielfunktionswert erst dann bestimmt wird, wenn alle Elemente
+betrachtet und evtl. verschoben worden sind. Wenn jedoch nur noch sehr wenige
+Elemente einen  neuen Cluster finden, kann es auch hier zu einer
+fr"uhzeitigen Terminierung kommen. Da wir haupts"achlich die
+Simultaneous--Centroid Nachbarschaft betrachten entstehen zus"atzliche
+Schwierigkeiten, da Elemente, die in der Randzone eines Clusters in der
+N"ahe eines anderen Clusters liegen, nicht die M"oglichkeit bekommen, 
+ihre Zugeh"origkeit zu wechseln.
+
+Aufgrund dieser Tatsachen scheint folgender Algorithmus erfolgsversprechend:
+
+\begin{algorithm}{Combined Algorithms}
+	1. Wende Algorithmus \ref{simultaneous} --- Simultaneous --- mit der
+	Centroid Nachbarschaft an.\\
+	\\
+	2. Wende auf diese L"osung noch Algorithmus \ref{localopt} --- 
+	modifizierte Lokale Suche --- an, der die Partitionierung aus
+	Schritt 1 als Startl"osung erh"alt und die Nachbarschaft
+	Nearest--Cluster verwendet.
+\end{algorithm}
+
+Die Elmente in den Randzonen der Cluster sind nun durch die nachgeschaltete
+Lokale Suche Prozedur mit der Nearest--Cluster Nachbarschaft in der Lage,
+ihren Cluster zu wechseln. Da die Nearest--Cluster Nachbarschaft nur f"ur 
+solche Elemente einen m"oglichen anderen Cluster zur"uckliefert, die
+in ihrer unmittelbaren Umgebung ein Element aus einem anderen Cluster
+besitzen, l"auft der 2. Schritt sehr effizient ab.
+
+Das Verfahren Combined Algorithms ist also in gewisser Hinsicht die
+Umkehrung von Simulated Annealing / Localopt mit der
+Simultaneous--Centroid Nachbarschaft.
+Denn bei der Vorgehensweise ist der Simultaneous--Algorithmus nicht der 
+Hauptakteur, sondern nur der "`Nachoptimierer"'.
